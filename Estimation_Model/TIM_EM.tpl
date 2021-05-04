@@ -199,12 +199,17 @@ DATA_SECTION
   init_int ph_rec
   init_number lb_rec_devs
   init_number ub_rec_devs
+  init_number Rdevs_start
+
   init_int ph_rec_app_CNST
   init_int ph_rec_app_YR
   init_number lb_rec_app
   init_number ub_rec_app
+  init_number Rapp_start
+
   init_int ph_init_abund
   init_number N_start
+  init_number init_dist_start
   init_int ph_reg_init
   init_int ph_non_natal_init
   init_number lb_init_dist
@@ -213,42 +218,56 @@ DATA_SECTION
   init_number ub_init_abund
   init_int ph_F
   init_number lb_F
-  init_number ub_F 
+  init_number ub_F
+  init_number F_start
   init_int ph_steep
   init_number lb_steep
   init_number ub_steep
+  init_number steep_start
+
   init_int ph_M_CNST
   init_int ph_M_pop_CNST
   init_int ph_M_age_CNST
   init_int ph_M_pop_age
   init_number lb_M
   init_number ub_M
+  init_number M_start
   init_int ph_sel_log
   init_number lb_sel_beta1
   init_number ub_sel_beta1
+  init_number sel_beta1_start
   init_number lb_sel_beta2
   init_number ub_sel_beta2
+  init_number sel_beta2_start
   init_number lb_sel_beta3
   init_number ub_sel_beta3
+  init_number sel_beta3_start
   init_number lb_sel_beta4
   init_number ub_sel_beta4
+  init_number sel_beta4_start
   init_number lb_sel_beta1_surv
   init_number ub_sel_beta1_surv
+  init_number sel_beta1_surv_start
   init_number lb_sel_beta2_surv
   init_number ub_sel_beta2_surv
+  init_number sel_beta2_surv_start
   init_number lb_sel_beta3_surv
   init_number ub_sel_beta3_surv
+  init_number sel_beta3_surv_start
   init_number lb_sel_beta4_surv
   init_number ub_sel_beta4_surv
+  init_number sel_beta4_surv_start
   init_int ph_sel_log_surv
   init_int ph_sel_dubl
   init_int ph_sel_dubl_surv
   init_int ph_q
   init_number lb_q
   init_number ub_q
+  init_number q_start
   init_int ph_F_rho // if we want random walk F, not implemented
   init_number lb_F_rho
   init_number ub_F_rho
+  init_number Frho_start
   init_int phase_T_YR
   init_int phase_T_YR_ALT_FREQ
   init_int T_est_freq
@@ -268,10 +287,15 @@ DATA_SECTION
   init_int phase_rep_rate_CNST
   init_number lb_B
   init_number ub_B
+  init_number B_start
   init_int ph_T_tag
   init_int ph_F_tag
-  init_int lb_scalar
-  init_int ub_scalar
+  init_int lb_scalar_T
+  init_int ub_scalar_T
+  init_int lb_scalar_F
+  init_int ub_scalar_F
+  init_number scalar_T_start
+  init_number scalar_F_start
 
   init_int ph_dummy
   //number ph_theta
@@ -301,7 +325,6 @@ DATA_SECTION
    init_int move_pen_switch
    init_number wt_T_pen
    init_number Tpen
-   init_number Tpen2
    init_number sigma_Tpen_EM
    init_number Rave_pen_switch
    init_number wt_Rave_pen
@@ -378,12 +401,11 @@ DATA_SECTION
    vector frac_total_abund_tagged(1,ny_rel) //proportion of total abundance that is tagged in each
    
    init_matrix input_M(1,np,1,na); // input M, can differ from True M
-   init_vector input_R_ave(1,np);//**added KB
    init_3darray input_rec_prop(1,np,1,nreg,1,nyrs);
    init_4darray input_selectivity(1,np,1,nreg,1,na,1,nf)
    init_4darray input_survey_selectivity(1,np,1,nreg,1,na,1,nfs)
-   init_vector input_steep(1,np); //**added KB
    init_3darray input_dist_init_abund(1,np,1,np,1,nreg)
+   init_4darray init_abund_EM(1,np,1,np,1,nreg,1,na)
   
 //##########################################################################################################################################
 //#########################################################################################################################################
@@ -609,8 +631,8 @@ PARAMETER_SECTION
   vector G_app_temp(1,nps);
   
  //movement paramters
-   init_bounded_vector ln_T_tag_res(1,nyr_rel,lb_scalar,ub_scalar,ph_T_tag);
-   init_bounded_vector ln_F_tag_scalar(1,nyr_rel,lb_scalar,ub_scalar,ph_F_tag);
+   init_bounded_vector ln_T_tag_res(1,nyr_rel,lb_scalar_T,ub_scalar_T,ph_T_tag);
+   init_bounded_vector ln_F_tag_scalar(1,nyr_rel,lb_scalar_F,ub_scalar_F,ph_F_tag);
 
    init_bounded_matrix ln_T_YR(1,T_lgth_YR,1,T_lgth-1,lb_T,ub_T,phase_T_YR);
    init_bounded_matrix ln_T_YR_ALT_FREQ(1,T_lgth_YR_ALT_FREQ,1,T_lgth-1,lb_T,ub_T,phase_T_YR_ALT_FREQ);
@@ -654,7 +676,7 @@ PARAMETER_SECTION
 //Mortality parameters
   //*****FOLLOWING WILL ONLY WORK PROPERLY IF ONLY 1 POP OR  NUMBER OF FLEETS IS CONSTANT ACROSS POPULATIONS****************
   init_bounded_matrix ln_F(1,F_lgth,1,fishfleet,lb_F,ub_F,ph_F) 
-  init_bounded_matrix F_rho(1,parpops,1,fishfleet,lb_F_rho,ub_F_rho,ph_F_rho) //random walk params*
+  init_bounded_matrix ln_F_rho(1,parpops,1,fishfleet,lb_F_rho,ub_F_rho,ph_F_rho) //random walk params*
   //*****************************************************************************
   init_bounded_number ln_M_CNST(lb_M,ub_M,ph_M_CNST) //cnst M by age and pop
   init_bounded_vector ln_M_pop_CNST(1,nps,lb_M,ub_M,ph_M_pop_CNST) //cnst M by age vary by pop 
@@ -929,26 +951,50 @@ PARAMETER_SECTION
   !! cout << "parameters set" << endl;
 
 INITIALIZATION_SECTION  //set initial values
-//   steep .814;
-//   ln_q 8;
+ steep steep_start;
  ln_R_ave Rave_start;
-//   log_sel_beta1 0;
-//   log_sel_beta2 2;
-//   log_sel_beta1surv 0;
-//   log_sel_beta2surv 2;
-//   ln_F -.7
-//   ln_rec_devs_RN 0;
-//   ln_rec_prop_CNST -1.1;
- ln_init_abund N_start;
+ ln_rec_devs Rdevs_start;
+ ln_rec_prop_CNST Rapp_start;
+ ln_rec_prop_YR Rapp_start;
+
+ ln_T_CNST T_start;
+ ln_T_CNST_AGE T_start;
+ ln_T_CNST_AGE_no_AG1 T_start;
  ln_T_YR T_start;
  ln_T_YR_ALT_FREQ T_start;
- ln_T_YR_AGE_ALT_FREQ T_start;
- ln_T_CNST_AGE T_start;
  ln_T_YR_AGE T_start;
- ln_T_YR_AGE_ALT_FREQ_no_AG1 T_start;
- ln_T_CNST_AGE_no_AG1 T_start;
  ln_T_YR_AGE_no_AG1 T_start;  
- ln_T_CNST T_start;
+ ln_T_YR_AGE_ALT_FREQ T_start;
+ ln_T_YR_AGE_ALT_FREQ_no_AG1 T_start;
+
+ ln_F F_start;
+ ln_F_rho Frho_start;
+ log_sel_beta1 sel_beta1_start;
+ log_sel_beta2 sel_beta2_start;
+ log_sel_beta3 sel_beta3_start;
+ log_sel_beta4 sel_beta4_start; 
+
+ ln_q q_start;
+ log_sel_beta1surv sel_beta1_surv_start;
+ log_sel_beta2surv sel_beta2_surv_start;
+ log_sel_beta3surv sel_beta3_surv_start;
+ log_sel_beta4surv sel_beta4_surv_start;
+
+ ln_M_CNST M_start;
+ ln_M_pop_CNST M_start;
+ ln_M_age_CNST M_start;
+ ln_M_pop_age M_start;
+
+ ln_init_abund N_start;
+ ln_nat init_dist_start;
+ ln_reg init_dist_start;
+
+ ln_rep_rate_CNST B_start;
+ ln_rep_rate_YR B_start;
+ ln_T_tag_res scalar_T_start;
+ ln_F_tag_scalar scalar_F_start;
+
+
 PROCEDURE_SECTION
  
    get_movement(); 
@@ -1903,7 +1949,11 @@ FUNCTION get_report_rate //reporting rate is assumed to be function of release e
      }
    }
 FUNCTION get_vitals
-
+    if(Rec_type==4 || Rec_type==5)
+      {
+       steep=steep_TRUE;
+      }
+       
     for (int j=1;j<=npops;j++)
      {
       if(ph_lmr>0)
@@ -1912,8 +1962,8 @@ FUNCTION get_vitals
        }
       //if(ph_lmr>0){R_ave(j)=mfexp(ln_R_ave(j));}
      }
-     
-    if(ph_lmr<0)
+
+    if(Rec_type==5 || Rec_type==6)
     {
      R_ave=R_ave_TRUE;
     }
@@ -2207,6 +2257,10 @@ FUNCTION get_vitals
      {              
         for (int y=1;y<=nyrs-1;y++)
               {
+               if(recruit_devs_switch==(-1))  //fix at true value
+                {
+                   rec_devs(j,y)=rec_devs_TRUE(j,y+1); //rec_devs vector in OM has length=nyrs, but only begins being used in year 2
+                }
                if(recruit_devs_switch==0)  //use population recruit relationship directly
                 {
                  rec_devs(j,y)=1;
@@ -2214,11 +2268,7 @@ FUNCTION get_vitals
                if(recruit_devs_switch==1)  // allow lognormal error around SR curve
                 {
                 rec_devs(j,y)=mfexp(ln_rec_devs(j,y)-.5*square(sigma_recruit(j)));
-                 
-                  if(ph_rec<0)
-                  {            
-                   rec_devs(j,y)=rec_devs_TRUE(j,y+1); //rec_devs vector in OM has length=nyrs, but only begins being used in year 2
-                  }     
+                   
              //    if(recruit_randwalk_switch==1)
              //    {
              //     rec_devs_randwalk(j,y)=rec_devs(j,y);
@@ -2236,10 +2286,6 @@ FUNCTION get_vitals
 // while the full SSB calcs use the region specific maturity/weight
 FUNCTION get_SPR
 
-  if(ph_steep<0){
-       steep=steep_TRUE;
-       }
-       
       for (int k=1;k<=npops;k++)
      {
       for (int n=1;n<=nages;n++)
@@ -2293,25 +2339,26 @@ FUNCTION get_abundance
                  for (int z=1;z<=nfleets(j);z++)
                  {
                  
-                if(init_abund_switch==0) //estimate abundance at age or fix at true value if est ph<0
-                {
-                  if(ph_init_abund>0) //ESTIMATE
-                   {
+                if(init_abund_switch==0) //estimate abundance at age
+                 {
                    init_abund(p,j,r,a)=init_abund_age(p,a)*frac_natal(p,j,r);
-                   }
-                   if(ph_init_abund<0) //FIX at TRUE Value
+                 }
+                if(init_abund_switch==(-1)) //fix abundance at age at true value
                    {
                     init_abund(p,j,r,a)=init_abund_TRUE(p,j,r,a);
-                    }
-                  }
+                   }
+               if(init_abund_switch==(-2)) //fix abundance at age at input value
+                   {
+                    init_abund(p,j,r,a)=init_abund_EM(p,j,r,a);
+                   }        
                    
                if(init_abund_switch==1) //assume an exponential decay from R_ave for init abundance
                   {
-                   if(ph_init_abund<0)
-                   {
+                  // if(ph_init_abund<0)
+                  // {
                      //init_abund(p,j,r,a)=R_ave(p)*abund_devs(p,a)*pow(mfexp(-(M(p,r,y,a))),a-1)*frac_natal(p,j,r);
                      init_abund(p,j,r,a)=R_ave(p)*pow(mfexp(-(M(p,r,y,a))),a-1)*frac_natal(p,j,r);
-                   }
+                  // }
                   }
 
                     abundance_at_age_BM_overlap_region(p,j,y,a,r)=init_abund(p,j,r,a);
@@ -4673,39 +4720,39 @@ FUNCTION evaluate_the_objective_function
    {
    if (phase_T_YR>0)
     {
-     Tpen_like+= (norm2(ln_T_YR+Tpen));
+     Tpen_like+= (norm2(ln_T_YR-Tpen));
     }
     if (phase_T_YR_ALT_FREQ>0)
      {
-      Tpen_like+= (norm2(ln_T_YR_ALT_FREQ+Tpen));
+      Tpen_like+= (norm2(ln_T_YR_ALT_FREQ-Tpen));
      }
     if (phase_T_YR_AGE_ALT_FREQ>0)
      {
-      Tpen_like+= (norm2(ln_T_YR_AGE_ALT_FREQ+Tpen));
+      Tpen_like+= (norm2(ln_T_YR_AGE_ALT_FREQ-Tpen));
      }
     if (phase_T_CNST_AGE>0)
     {
-     Tpen_like+= (norm2(ln_T_CNST_AGE+Tpen));
+     Tpen_like+= (norm2(ln_T_CNST_AGE-Tpen));
     }
     if (phase_T_YR_AGE>0)
     {
-     Tpen_like+= (norm2(ln_T_YR_AGE+Tpen));
+     Tpen_like+= (norm2(ln_T_YR_AGE-Tpen));
     }
     if (phase_T_CNST>0)
     {
-     Tpen_like+= (norm2(ln_T_CNST+Tpen));
+     Tpen_like+= (norm2(ln_T_CNST-Tpen));
     }
     if (phase_T_YR_AGE_ALT_FREQ_no_AG1>0)
      {
-      Tpen_like+= (norm2(ln_T_YR_AGE_ALT_FREQ_no_AG1+Tpen));
+      Tpen_like+= (norm2(ln_T_YR_AGE_ALT_FREQ_no_AG1-Tpen));
      }
     if (phase_T_CNST_AGE_no_AG1>0)
     {
-     Tpen_like+= (norm2(ln_T_CNST_AGE_no_AG1+Tpen));
+     Tpen_like+= (norm2(ln_T_CNST_AGE_no_AG1-Tpen));
     }
     if (phase_T_YR_AGE_no_AG1>0)
     {
-     Tpen_like+= (norm2(ln_T_YR_AGE_no_AG1+Tpen));
+     Tpen_like+= (norm2(ln_T_YR_AGE_no_AG1-Tpen));
     }
    }
 
@@ -4833,7 +4880,7 @@ FUNCTION evaluate_the_objective_function
  {
   if (active(ln_init_abund))
   {
-      init_abund_pen+= norm2(ln_init_abund+mean_N);
+      init_abund_pen+= norm2(ln_init_abund-mean_N);
     } 
    }
   
@@ -4841,7 +4888,7 @@ FUNCTION evaluate_the_objective_function
  {
   if (active(ln_R_ave))
   {
-      Rave_pen+= norm2(ln_R_ave+Rave_mean);
+      Rave_pen+= norm2(ln_R_ave-Rave_mean);
     } 
    }
   
