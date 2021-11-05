@@ -192,7 +192,7 @@
   #==4 symmetric movement across all populations and regions
   #==5 allow movement across all regions and populations, based on population/region specific input residency (symmetric off diagonal)
   #==6 movement based on input IBM connectivity matrices  
-6
+1
 
 #first_post_settle_move_switch
   # allows different movement patterns for newly settled fish up until age_first_move
@@ -201,7 +201,7 @@
   #==0 no movement
   #==1 input first movement rates using first_move_input
   #==2 return to natal population based on first_return parameter (proportion of fish that return during first post-settlement movement)
-0
+-1
 
 #move_switch
   # Sets the type of adult movement pattern (sets age class>0 movements)
@@ -1909,10 +1909,10 @@
   #==2 Beverton-Holt stock-recruit functions based on stock-specific estimated steepness, R0 (R_ave)
        # NOTE: SRR DOES NOT TAKE INTO ACCOUNT SPATIAL DYNAMICS (IE, MOVEMENT AMONG POPULATIONS OR REGIONS); SEE README TOPIC AT TOP OF DAT FILE
   #==3 cyclical (sine wave type); HAS NOT YET BEEN IMPLEMENTED
-  #==4 Beverton-Holt stock-recruit functions based on stock-specific fixed (at true value) steepness, estimated R0 (R_ave)
-  #==5 Beverton-Holt stock-recruit functions based on stock-specific fixed (at true value) steepness and R0 (R_ave) (i.e., both SRR parameters fixed at true values)
-  #==6 stock-recruit relationship assumes an average value based on fixed (at true value) R_ave
-4
+  #==4 (NOT IMPLEMENTED...USE OPTION 2 for BH) Beverton-Holt stock-recruit functions based on stock-specific fixed (at true value) steepness, estimated R0 (R_ave)
+  #==5 (NOT IMPLEMENTED...USE OPTION 2 for BH) Beverton-Holt stock-recruit functions based on stock-specific fixed (at true value) steepness and R0 (R_ave) (i.e., both SRR parameters fixed at true values)
+  #==6 (NOT IMPLEMENTED...USE OPTION 1 for AVE R) stock-recruit relationship assumes an average value based on fixed (at true value) R_ave
+2
 
 ###############################################################################################################################################################################################################
 #ph_lmr
@@ -2123,19 +2123,19 @@
   # defines interval width (ie, yearly time blocks) for movement estimation (number of year movement parameters is nyrs/T_est_freq, rounded up)
   # NOTE: used when move_switch_EM==2 AND ph_T_YR_ALT_FREQ>0 OR ph_T_YR_AGE_ALT_FREQ>0 OR ph_T_YR_AGE_ALT_FREQ_no_AG1>0
   # eg., T_est_freq=2 implies estimating movement in 2 year timeblocks (1 movement parameter for every other year)
-2
+1
 
 #T_est_age_freq
   # defines interval width (ie, age time blocks) for movement estimation (number of age parameters is nages/T_age_freq, rounded up)
   # NOTE: used when move_switch_EM==2 AND ph_T_YR_AGE_ALT_FREQ>0 OR ph_T_YR_AGE_ALT_FREQ_no_AG1>0
   # NOTE: IF juv_age HIGHER THAN OLDEST AGE ASSOCIATED WITH 2nd AGE CLASS ESTIMATED PARAMETER THEN WILL HAVE UNUSED MOVEMENT PARAMETERS AND CONVERGENCE ISSUES (e.g., if nages==4, T_est_age_freq=2, and juv_age==4, THEN will est 2 T parameters (=4/2=2) but age-1 T will be applied to all ages, so 2nd T parameter est but not used)
   # eg., T_est_age_freq=1 implies estimating movement for every age; T_est_age_freq=2 implies estimating movement in 2 age timeblocks (ie., for every other age)
-1
+2
 
 #juv_age
   # age at/below which all Ts are set to the estimated movement rate for age-1 in that timeblock
   # NOTE: used when move_switch_EM==2 AND ph_T_YR_AGE_ALT_FREQ>0 OR ph_T_YR_AGE_ALT_FREQ_no_AG1>0
-1
+2
 
 #lb_T
   # lower bound on movement rate estimate in logit transform space, initial estimate is T_start
@@ -2253,7 +2253,7 @@
 
 #F_start
   # initial estimate for fishing mortality parameter in log-space
--0.7
+-2
 
 #lb_F_rho
   # lower bound on fishing mortality random walk parameter estimate, initial estimate is Frho_start
@@ -2265,7 +2265,7 @@
 
 #Frho_start
   # initial estimate for fishing mortality random walk parameter in log-space
--0.7
+-2
 
 #lb_sel_beta1
   # lower bound on fishery selectivity beta1 parameter estimate, initial estimate is sel_beta1_start
@@ -2289,7 +2289,7 @@
 
 #sel_beta2_start
   # initial estimate for fishery selectivity beta2 parameter in log-space
-2
+0
 
 #lb_sel_beta3
   # lower bound on fishery selectivity beta3 parameter estimate, initial estimate is sel_beta3_start
@@ -2341,7 +2341,7 @@
 
 #q_start
   # initial estimate for survey catchability parameter in log-space
-8
+-2
 
 #lb_sel_beta1_surv
   # lower bound on survey selectivity beta1 parameter estimate, initial estimate is sel_beta1_surv_start
@@ -2365,7 +2365,7 @@
 
 #sel_beta2_surv_start
   # initial estimate for survey selectivity beta2 parameter in log-space
-2
+0
 
 #lb_sel_beta3_surv
   # lower bound on survey selectivity beta3 parameter estimate, initial estimate is sel_beta3_surv_start
@@ -2411,7 +2411,7 @@
 
 #M_start
   # initial estimate for natural mortality parameter in log-space
--0.7
+-2
 
 #input_M_EM (1,np_em,1,na)
   # natural mortality for EM for each population and age
