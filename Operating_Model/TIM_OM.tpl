@@ -4904,86 +4904,86 @@ REPORT_SECTION
 
 
  //Aggregating OBS values and vitals for panmictic EM
- if(EM_structure==0 && OM_structure>0){ 
-  for (int y=1;y<=nyrs;y++)
-   {
-   for (int p=1;p<=npops;p++)
-    {
-    for (int r=1;r<=nregions(p);r++)
-      {
-      for (int z=1;z<=nfleets(p);z++)
-        {
-         for(int a=1;a<=nages;a++)
-          {
+ //if(EM_structure==0 && OM_structure>0){ 
+ // for (int y=1;y<=nyrs;y++)
+ //  {
+ //  for (int p=1;p<=npops;p++)
+ //   {
+ //   for (int r=1;r<=nregions(p);r++)
+ //     {
+ //     for (int z=1;z<=nfleets(p);z++)
+ //       {
+ //        for(int a=1;a<=nages;a++)
+ //         {
        //aggregating weight at age
-        input_weight_region_temp(p,a,r)=input_weight(p,r,a)*abund_frac_region(p,r);//rearrange to summarize and weight for output
-        input_weight_region(p,a)=sum(input_weight_region_temp(p,a));
-        input_weight_population_temp(a,p)=input_weight_region(p,a);
-        input_weight_population(a)=sum(input_weight_population_temp(a));
+ //       input_weight_region_temp(p,a,r)=input_weight(p,r,a)*abund_frac_region(p,r);//rearrange to summarize and weight for output
+ //       input_weight_region(p,a)=sum(input_weight_region_temp(p,a));
+ //       input_weight_population_temp(a,p)=input_weight_region(p,a);
+ //       input_weight_population(a)=sum(input_weight_population_temp(a));
 
         //aggregating catch weight at age
-        input_catch_weight_region_temp(p,a,r)=input_catch_weight(p,r,a)*abund_frac_region(p,r);//sum by region
-        input_catch_weight_region(p,a)=sum(input_catch_weight_region_temp(p,a));
-        input_catch_weight_population_temp(a,p)=input_catch_weight_region(p,a);
-        input_catch_weight_population(a)=sum(input_catch_weight_population_temp(a));
+ //       input_catch_weight_region_temp(p,a,r)=input_catch_weight(p,r,a)*abund_frac_region(p,r);//sum by region
+ //       input_catch_weight_region(p,a)=sum(input_catch_weight_region_temp(p,a));
+ //       input_catch_weight_population_temp(a,p)=input_catch_weight_region(p,a);
+ //       input_catch_weight_population(a)=sum(input_catch_weight_population_temp(a));
 
         //aggregating fecundity
-        fecundity_region_temp(p,a,r)=fecundity(p,r,a)*abund_frac_region(p,r);//sum by region
-        fecundity_region(p,a)=sum(fecundity_region_temp(p,a));
-        fecundity_population_temp(a,p)=fecundity_region(p,a);
-        fecundity_population(a)=sum(fecundity_population_temp(a));
+ //       fecundity_region_temp(p,a,r)=fecundity(p,r,a)*abund_frac_region(p,r);//sum by region
+ ///       fecundity_region(p,a)=sum(fecundity_region_temp(p,a));
+ //       fecundity_population_temp(a,p)=fecundity_region(p,a);
+ //       fecundity_population(a)=sum(fecundity_population_temp(a));
 
         //aggregating maturity
-        maturity_region_temp(p,a,r)=maturity(p,r,a)*abund_frac_region(p,r);//sum by region
-        maturity_region(p,a)=sum(maturity_region_temp(p,a));
-        maturity_population_temp(a,p)=maturity_region(p,a);
-        maturity_population(a)=sum(maturity_population_temp(a));
+ //       maturity_region_temp(p,a,r)=maturity(p,r,a)*abund_frac_region(p,r);//sum by region
+ //       maturity_region(p,a)=sum(maturity_region_temp(p,a));
+ //       maturity_population_temp(a,p)=maturity_region(p,a);
+  //      maturity_population(a)=sum(maturity_population_temp(a));
 
         //aggregating selectivity
-        selectivity_age_temp(p,a,z,r)=selectivity_age(p,r,a,z)*abund_frac_region(p,r);
-        selectivity_age_pop(p,a,z)=sum(selectivity_age_temp(p,a,z));
-        survey_selectivity_age_temp(p,a,z,r)=survey_selectivity_age(p,r,a,z)*abund_frac_region(p,r);
-        survey_selectivity_age_pop(p,a,z)=sum(survey_selectivity_age_temp(p,a,z));
+ //       selectivity_age_temp(p,a,z,r)=selectivity_age(p,r,a,z)*abund_frac_region(p,r);
+ //       selectivity_age_pop(p,a,z)=sum(selectivity_age_temp(p,a,z));
+ //       survey_selectivity_age_temp(p,a,z,r)=survey_selectivity_age(p,r,a,z)*abund_frac_region(p,r);
+ //       survey_selectivity_age_pop(p,a,z)=sum(survey_selectivity_age_temp(p,a,z));
 
         //aggregating the age comps
 
         //survey
-        OBS_survey_prop_temp(p,r,y,a,z)=OBS_survey_prop(p,r,z,y,a);
-        OBS_survey_prop_temp2(p,r,y,a)=sum(OBS_survey_prop_temp(p,r,y,a));
-        OBS_survey_prop_temp3(p,r,y,a)=OBS_survey_prop_temp2(p,r,y,a)*abund_frac_age_region(p,r,y,a);
-        OBS_survey_prop_temp4(p,y,a,r)=OBS_survey_prop_temp3(p,r,y,a);
-        OBS_survey_prop_population(p,y,a)=sum(OBS_survey_prop_temp4(p,y,a));
-        OBS_survey_prop_pan_temp(y,a,p)= OBS_survey_prop_population(p,y,a);
-        OBS_survey_prop_pan(y,a)=sum(OBS_survey_prop_pan_temp(y,a));
+ //        OBS_survey_prop_temp(p,r,y,a,z)=OBS_survey_prop(p,r,z,y,a);
+ //        OBS_survey_prop_temp2(p,r,y,a)=sum(OBS_survey_prop_temp(p,r,y,a));
+ //       OBS_survey_prop_temp3(p,r,y,a)=OBS_survey_prop_temp2(p,r,y,a)*abund_frac_age_region(p,r,y,a);
+ //       OBS_survey_prop_temp4(p,y,a,r)=OBS_survey_prop_temp3(p,r,y,a);
+ //       OBS_survey_prop_population(p,y,a)=sum(OBS_survey_prop_temp4(p,y,a));
+ //       OBS_survey_prop_pan_temp(y,a,p)= OBS_survey_prop_population(p,y,a);
+ //       OBS_survey_prop_pan(y,a)=sum(OBS_survey_prop_pan_temp(y,a));
 
         //catch
-        OBS_catch_prop_temp(p,r,y,a,z)= OBS_catch_prop(p,r,z,y,a);
-        OBS_catch_prop_temp2(p,r,y,a)=sum(OBS_catch_prop_temp(p,r,y,a));
-        OBS_catch_prop_temp3(p,r,y,a)= OBS_catch_prop_temp2(p,r,y,a)*abund_frac_age_region(p,r,y,a);
-        OBS_catch_prop_temp4(p,y,a,r)= OBS_catch_prop_temp3(p,r,y,a);
-        OBS_catch_prop_population(p,y,a)=sum(OBS_catch_prop_temp4(p,y,a));
-        OBS_catch_prop_pan_temp(y,a,p)= OBS_catch_prop_population(p,y,a);
-        OBS_catch_prop_pan(y,a)=sum(OBS_catch_prop_pan_temp(y,a));
+ //       OBS_catch_prop_temp(p,r,y,a,z)= OBS_catch_prop(p,r,z,y,a);
+ //       OBS_catch_prop_temp2(p,r,y,a)=sum(OBS_catch_prop_temp(p,r,y,a));
+ //       OBS_catch_prop_temp3(p,r,y,a)= OBS_catch_prop_temp2(p,r,y,a)*abund_frac_age_region(p,r,y,a);
+ //       OBS_catch_prop_temp4(p,y,a,r)= OBS_catch_prop_temp3(p,r,y,a);
+ //       OBS_catch_prop_population(p,y,a)=sum(OBS_catch_prop_temp4(p,y,a));
+ //       OBS_catch_prop_pan_temp(y,a,p)= OBS_catch_prop_population(p,y,a);
+ //       OBS_catch_prop_pan(y,a)=sum(OBS_catch_prop_pan_temp(y,a));
 
 
-        } //end age loop
-        } //end fleets loop
+ //       } //end age loop
+ //       } //end fleets loop
 
         //proportion female
-        prop_fem_temp(p,r)= prop_fem(p,r)*abund_frac_region(p,r); 
-        prop_fem_pan=sum(prop_fem_temp);
-        rec_index_temp(p,y,r)=rec_index_BM(p,r,y)*abund_frac_region_year(p,r,y); //rearrange and weight for summing
+ //       prop_fem_temp(p,r)= prop_fem(p,r)*abund_frac_region(p,r); 
+ //       prop_fem_pan=sum(prop_fem_temp);
+ //       rec_index_temp(p,y,r)=rec_index_BM(p,r,y)*abund_frac_region_year(p,r,y); //rearrange and weight for summing
 
-       } //end reg loop
+ //      } //end reg loop
 
        //rec index
-        rec_index_BM_population(p,y)=sum(rec_index_temp(p,y));// combined by region
-        rec_index_temp2(y,p)=rec_index_BM_population(p,y);
-        rec_index_pan(y)=sum(rec_index_temp2(y));//npops; combined by populations
+ //       rec_index_BM_population(p,y)=sum(rec_index_temp(p,y));// combined by region
+ //       rec_index_temp2(y,p)=rec_index_BM_population(p,y);
+ //       rec_index_pan(y)=sum(rec_index_temp2(y));//npops; combined by populations
         
-      } //end pop loop          
-     } //end year loop
-  }
+ //     } //end pop loop          
+ //    } //end year loop
+ // }
 
 
 //Additional model structure parameters
@@ -5331,110 +5331,110 @@ REPORT_SECTION
 ////////////////////////////////////////////////////
 
 //Spatial to panmictic EM inputs
-   if(EM_structure==0 && OM_structure>=0){ 
-      report<<"#input_weight"<<endl;
-      report<<input_weight_population<<endl;
-      report<<"#input_catch_weight"<<endl;
-      report<<input_catch_weight_population<<endl;
-      report<<"#fecundity"<<endl;
-      report<<fecundity_population<<endl;
-      report<<"#maturity"<<endl;
-      report<<maturity_population<<endl;
-      report<<"#prop_fem"<<endl; 
-      report<<prop_fem_pan<<endl;
-      report<<"#OBS_rec_index_BM"<<endl;
-      report<<rec_index_pan<<endl;
+//   if(EM_structure==0 && OM_structure>=0){ 
+//      report<<"#input_weight"<<endl;
+//      report<<input_weight_population<<endl;
+//      report<<"#input_catch_weight"<<endl;
+//      report<<input_catch_weight_population<<endl;
+//      report<<"#fecundity"<<endl;
+//      report<<fecundity_population<<endl;
+//      report<<"#maturity"<<endl;
+//      report<<maturity_population<<endl;
+//      report<<"#prop_fem"<<endl; 
+//      report<<prop_fem_pan<<endl;
+//      report<<"#OBS_rec_index_BM"<<endl;
+//      report<<rec_index_pan<<endl;
 
  //for straight panmictic EM 
-    if(sum(nfleets_EM)==1){
-      report<<"#OBS_survey_fleet"<<endl;
-      report<<OBS_survey_total_bio<<endl;
-      report<<"#OBS_survey_fleet_bio_se_EM"<<endl;
-      report<<OBS_survey_fleet_bio_se_EM<<endl;
-      report<<"#OBS_survey_prop"<<endl;
-      report<<OBS_survey_prop_pan<<endl;
-      report<<"#OBS_survey_prop_N_EM"<<endl;
-      report<<OBS_survey_prop_N_EM<<endl;
-      report<<"#OBS_yield_fleet"<<endl;
-      report<<OBS_yield_total<<endl;
-      report<<"#OBS_yield_fleet_se_EM"<<endl;
-      report<<OBS_yield_fleet_se_EM<<endl;    
-      report<<"#OBS_catch_prop"<<endl;
-      report<<OBS_catch_prop_pan<<endl; 
-      report<<"#OBS_catch_prop_N_EM"<<endl;
-      report<<OBS_catch_prop_N_EM<<endl;
+ //   if(sum(nfleets_EM)==1){
+ //     report<<"#OBS_survey_fleet"<<endl;
+ //     report<<OBS_survey_total_bio<<endl;
+ //     report<<"#OBS_survey_fleet_bio_se_EM"<<endl;
+ //     report<<OBS_survey_fleet_bio_se_EM<<endl;
+ //     report<<"#OBS_survey_prop"<<endl;
+ //     report<<OBS_survey_prop_pan<<endl;
+ //     report<<"#OBS_survey_prop_N_EM"<<endl;
+ //     report<<OBS_survey_prop_N_EM<<endl;
+ //     report<<"#OBS_yield_fleet"<<endl;
+ //     report<<OBS_yield_total<<endl;
+ //     report<<"#OBS_yield_fleet_se_EM"<<endl;
+ //     report<<OBS_yield_fleet_se_EM<<endl;    
+ //     report<<"#OBS_catch_prop"<<endl;
+ //     report<<OBS_catch_prop_pan<<endl; 
+ //     report<<"#OBS_catch_prop_N_EM"<<endl;
+ //     report<<OBS_catch_prop_N_EM<<endl;
       
 //tagging information
-      report<<"#nyrs_release"<<endl;
-      report<<nyrs_release<<endl;
-      report<<"#years_of_tag_releases "<<endl;
-      report<<yrs_releases<<endl;
-      report<<"#max_life_tags"<<endl;
-      report<<max_life_tags<<endl;
-      report<<"#age_full_selection"<<endl;
-      report<<age_full_selection<<endl;
-      report<<"#input_report_rate_EM"<<endl;
-      report<<input_report_rate_EM<<endl;
-      report<<"#ntags"<<endl;
-      report<<ntags_pan<<endl;
-      report<<"#ntags_total"<<endl;
-      report<<ntags_total<<endl;
-      report<<"#tag_N_EM"<<endl;
-      report<<tag_N_EM<<endl;
-      report<<"#input_T_EM"<<endl;
-      report<<input_T_EM<<endl;
-      report<<"#OBS_tag_prop_pan_final"<<endl;
-      report<<OBS_tag_prop_pan_final<<endl;
+ //     report<<"#nyrs_release"<<endl;
+ //     report<<nyrs_release<<endl;
+ //     report<<"#years_of_tag_releases "<<endl;
+ //     report<<yrs_releases<<endl;
+ //     report<<"#max_life_tags"<<endl;
+ //     report<<max_life_tags<<endl;
+ //     report<<"#age_full_selection"<<endl;
+ //     report<<age_full_selection<<endl;
+ //     report<<"#input_report_rate_EM"<<endl;
+ //     report<<input_report_rate_EM<<endl;
+ //     report<<"#ntags"<<endl;
+ //     report<<ntags_pan<<endl;
+ //     report<<"#ntags_total"<<endl;
+ //     report<<ntags_total<<endl;
+ //     report<<"#tag_N_EM"<<endl;
+ //     report<<tag_N_EM<<endl;
+ //     report<<"#input_T_EM"<<endl;
+ //     report<<input_T_EM<<endl;
+ //    report<<"#OBS_tag_prop_pan_final"<<endl;
+ //     report<<OBS_tag_prop_pan_final<<endl;
      // report<<"#OBS_tag_prop_pan_final_no_age"<<endl;
      // report<<OBS_tag_prop_pan_final_no_age<<endl;
-      }
+   //   }
 
 
  //for fleets-as-areas approach
-      if(sum(nfleets_EM)>1){
+ //     if(sum(nfleets_EM)>1){
       //fleet specific outputs for fishery, panmictic for survey
-      report<<"#OBS_survey_fleet"<<endl;
-      report<<OBS_survey_total_bio<<endl;
-      report<<"#OBS_survey_fleet_bio_se_EM"<<endl;
-      report<<OBS_survey_fleet_bio_se_EM<<endl;
-      report<<"#OBS_survey_prop"<<endl;
-      report<<OBS_survey_prop_pan<<endl;
-      report<<"#OBS_survey_prop_N_EM"<<endl;
-      report<<OBS_survey_prop_N_EM<<endl;
-      report<<"#OBS_yield_fleet"<<endl;
-      report<<OBS_yield_fleet<<endl;
-      report<<"#OBS_yield_fleet_se_EM"<<endl;
-      report<<OBS_yield_fleet_se_EM<<endl;
-      report<<"#OBS_catch_prop"<<endl;
-      report<<OBS_catch_prop<<endl;
-      report<<"#OBS_catch_prop_N_EM"<<endl;
-      report<<OBS_catch_prop_N_EM<<endl;
+ //     report<<"#OBS_survey_fleet"<<endl;
+ //     report<<OBS_survey_total_bio<<endl;
+ //     report<<"#OBS_survey_fleet_bio_se_EM"<<endl;
+ //     report<<OBS_survey_fleet_bio_se_EM<<endl;
+ //     report<<"#OBS_survey_prop"<<endl;
+ //     report<<OBS_survey_prop_pan<<endl;
+ //     report<<"#OBS_survey_prop_N_EM"<<endl;
+ //    report<<OBS_survey_prop_N_EM<<endl;
+ //     report<<"#OBS_yield_fleet"<<endl;
+ //     report<<OBS_yield_fleet<<endl;
+ //     report<<"#OBS_yield_fleet_se_EM"<<endl;
+ //     report<<OBS_yield_fleet_se_EM<<endl;
+ //     report<<"#OBS_catch_prop"<<endl;
+ //     report<<OBS_catch_prop<<endl;
+ //     report<<"#OBS_catch_prop_N_EM"<<endl;
+ //     report<<OBS_catch_prop_N_EM<<endl;
       
 //tagging information
-      report<<"#nyrs_release"<<endl;
-      report<<nyrs_release<<endl;
-      report<<"#years_of_tag_releases "<<endl;
-      report<<yrs_releases<<endl;
-      report<<"#max_life_tags"<<endl;
-      report<<max_life_tags<<endl;
-      report<<"#age_full_selection"<<endl;
-      report<<age_full_selection<<endl;
-      report<<"#input_report_rate_EM"<<endl;
-      report<<input_report_rate_EM<<endl;
-      report<<"#ntags"<<endl;
-      report<<ntags_pan<<endl;
-      report<<"#ntags_total"<<endl;
-      report<<ntags_total<<endl;
-      report<<"#tag_N_EM"<<endl;
-      report<<tag_N_EM<<endl;
-      report<<"#input_T_EM"<<endl;
-      report<<input_T_EM<<endl;
-      report<<"#OBS_tag_prop_pan_final"<<endl;
-      report<<OBS_tag_prop_pan_final<<endl;
+ //     report<<"#nyrs_release"<<endl;
+ //     report<<nyrs_release<<endl;
+ //     report<<"#years_of_tag_releases "<<endl;
+ //     report<<yrs_releases<<endl;
+ //     report<<"#max_life_tags"<<endl;
+ //     report<<max_life_tags<<endl;
+ //     report<<"#age_full_selection"<<endl;
+ //     report<<age_full_selection<<endl;
+ //     report<<"#input_report_rate_EM"<<endl;
+ //     report<<input_report_rate_EM<<endl;
+ //     report<<"#ntags"<<endl;
+ //     report<<ntags_pan<<endl;
+ //     report<<"#ntags_total"<<endl;
+ //     report<<ntags_total<<endl;
+ //     report<<"#tag_N_EM"<<endl;
+ //     report<<tag_N_EM<<endl;
+ //     report<<"#input_T_EM"<<endl;
+ //     report<<input_T_EM<<endl;
+ //     report<<"#OBS_tag_prop_pan_final"<<endl;
+ //     report<<OBS_tag_prop_pan_final<<endl;
      // report<<"#OBS_tag_prop_pan_final_no_age"<<endl;
      // report<<OBS_tag_prop_pan_final_no_age<<endl;
-      }
-      }
+ //     }
+ //     }
 
 //spatial to spatial EM inputs or panmictic matching - no aggregation needed
      if((EM_structure>0 && OM_structure>0) || (EM_structure==0 && OM_structure==0)){
