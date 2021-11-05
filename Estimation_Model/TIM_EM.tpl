@@ -61,7 +61,7 @@ DATA_SECTION
   //#==0 allow OBS data to be used for estimation
   //#==1 allow TRUE data from without error to be used for estimation
 
-  init_number fleets_as_areas_switch
+  //init_number fleets_as_areas_switch
   //==0 not fleets as areas
   //==1 fleets as areas approach for EM
   
@@ -396,17 +396,17 @@ DATA_SECTION
    init_5darray OBS_tag_prop_final(1,np,1,nreg,1,nyr_rel,1,na,1,nt)
    init_4darray OBS_tag_prop_final_no_age(1,np,1,nreg,1,nyr_rel,1,nt)
 
-   matrix input_residency_larval(1,np,1,nreg)  //larval residency probability
-   3darray input_residency(1,np,1,nreg,1,na) //
-   vector frac_total_abund_tagged(1,ny_rel) //proportion of total abundance that is tagged in each
-   
    init_matrix input_M(1,np,1,na); // input M, can differ from True M
    init_3darray input_rec_prop(1,np,1,nreg,1,nyrs);
    init_4darray input_selectivity(1,np,1,nreg,1,na,1,nf)
    init_4darray input_survey_selectivity(1,np,1,nreg,1,na,1,nfs)
    init_3darray input_dist_init_abund(1,np,1,np,1,nreg)
    init_4darray init_abund_EM(1,np,1,np,1,nreg,1,na)
-  
+
+   matrix input_residency_larval(1,np,1,nreg)  //larval residency probability
+   3darray input_residency(1,np,1,nreg,1,na) //
+   vector frac_total_abund_tagged(1,ny_rel) //proportion of total abundance that is tagged in each
+   
 //##########################################################################################################################################
 //#########################################################################################################################################
 //##########################################################################################################################################
