@@ -20,7 +20,7 @@
 GLOBALS_SECTION
   #include "admodel.h"
   #include "qfclib.h"
-  #define EOUT(var) cout <<#var<<" "<<var<<endl;
+  #define EOUT(var) cout << #var <<" "<<var<<endl;
 
 TOP_OF_MAIN_SECTION
   arrmblsize=500000000;
@@ -71,7 +71,7 @@ DATA_SECTION
   init_int nages
    // number of ages (last age is a plus group)
    
-  init_number nyrs
+  init_int nyrs
    // number of years in the model
    // NOTE: for reference point sims, MSY_model_type_switch>0,  (e.g., F_MSY search), should set this sufficiently high (>100) to approximate equilibrium
  
@@ -774,9 +774,9 @@ DATA_SECTION
    //==2 Beverton-Holt population-recruit functions based on population-specific estimated steepness, R0 (R_ave)
          // NOTE: SRR DOES NOT TAKE INTO ACCOUNT SPATIAL DYNAMICS (IE, MOVEMENT AMONG POPULATIONS OR REGIONS); SEE README TOPIC AT TOP OF DAT FILE
    //==3 environmental recruitment - sine fucntion based on amplitude and frequency
-   //==4 Beverton-Holt population-recruit functions based on population-specific fixed (at true value) steepness, estimated R0 (R_ave)
-   //==5 Beverton-Holt stock-recruit functions based on stock-specific fixed (at true value) steepness and R0 (R_ave) (i.e., both SRR parameters fixed at true values)
-   //==6 stock-recruit relationship assumes an average value based on fixed (at true value) R_ave
+   //==4 (NOT IMPLEMENTED...USE OPTION 2 for BH) Beverton-Holt population-recruit functions based on population-specific fixed (at true value) steepness, estimated R0 (R_ave)
+   //==5 (NOT IMPLEMENTED...USE OPTION 2 for BH) Beverton-Holt stock-recruit functions based on stock-specific fixed (at true value) steepness and R0 (R_ave) (i.e., both SRR parameters fixed at true values)
+   //==6 (NOT IMPLEMENTED...USE OPTION 1 for AVE R) stock-recruit relationship assumes an average value based on fixed (at true value) R_ave
    
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   init_int ph_lmr                                                           // phase for stock-recruit relationship log_mean_recruitment (LMR; or R0, virgin recruitment) estimation, used when Rec_type_EM==1 OR 2 OR 4
@@ -4144,7 +4144,6 @@ FUNCTION get_tag_recaptures
   /////////////////////////////////////////////////////////////////////////////
   //reporting rate is assumed to be function of release event and recap location (not a function of recap year...could expand to this, but not priority at momement)
   ///////////////////////////////////////////////////////////////////////////////////
-
  if(do_tag==1)
   {
    for(int x=1; x<=nyrs_release; x++)
@@ -4280,7 +4279,7 @@ FUNCTION get_tag_recaptures
       xx=yrs_releases(x);
       for (int a=1;a<=nages;a++) //release age //because accounting for release age, don't need to account for recap age, just adjust mortality and T, to use plus group value if recapture age exceeds max age
         {
-         for(int y=1;y<=min(max_life_tags,ny-xx+1);y++)  //recap year
+         for(int y=1;y<=min(max_life_tags,nyrs-xx+1);y++)  //recap year
           {
            for(int j=1;j<=npops;j++) //recap stock
             {
@@ -4449,7 +4448,7 @@ FUNCTION get_tag_recaptures
          }
         }
        }
-
+  
  for (int i=1;i<=npops;i++)
   {
    for (int n=1;n<=nregions(i);n++)
@@ -4460,7 +4459,7 @@ FUNCTION get_tag_recaptures
       for (int a=1;a<=nages;a++) //release age //because accounting for release age, don't need to account for recap age, just adjust mortality and T, to use plus group value if recapture age exceeds max age
         {
         total_recap_temp.initialize();
-         for(int y=1;y<=min(max_life_tags,ny-xx+1);y++)  //recap year
+         for(int y=1;y<=min(max_life_tags,nyrs-xx+1);y++)  //recap year
           {
            for(int j=1;j<=npops;j++) //recap stock
             {
@@ -4485,7 +4484,7 @@ FUNCTION get_tag_recaptures
       xx=yrs_releases(x);
       for (int a=1;a<=nages;a++) //release age //because accounting for release age, don't need to account for recap age, just adjust mortality and T, to use plus group value if recapture age exceeds max age
         {
-         for(int y=1;y<=min(max_life_tags,ny-xx+1);y++)  //recap year
+         for(int y=1;y<=min(max_life_tags,nyrs-xx+1);y++)  //recap year
           {
            for(int j=1;j<=npops;j++) //recap stock
             {
@@ -4526,7 +4525,7 @@ FUNCTION get_tag_recaptures
       xx=yrs_releases(x);
        for (int a=1;a<=nages;a++) //release age 
         {
-         for(int y=1;y<=min(max_life_tags,ny-xx+1);y++)  //recap year
+         for(int y=1;y<=min(max_life_tags,nyrs-xx+1);y++)  //recap year
           {
            for(int j=1;j<=npops;j++) //recap stock
             {
@@ -4536,7 +4535,7 @@ FUNCTION get_tag_recaptures
              }
             }
            }
-         for(int y=1;y<=min(max_life_tags,ny-xx+1);y++)  //recap year
+         for(int y=1;y<=min(max_life_tags,nyrs-xx+1);y++)  //recap year
           {
            for(int j=1;j<=npops;j++) //recap stock
             {
@@ -4547,7 +4546,7 @@ FUNCTION get_tag_recaptures
             }
            }
          //tag_prop_temp2=0;
-         for(int y=1;y<=min(max_life_tags,ny-xx+1);y++)  //recap year
+         for(int y=1;y<=min(max_life_tags,nyrs-xx+1);y++)  //recap year
           {
            for(int j=1;j<=npops;j++) //recap stock
             {
@@ -4559,15 +4558,15 @@ FUNCTION get_tag_recaptures
             }
              for(int s=1;s<=(max_life_tags*sum(nregions)+1);s++) //create temp array that has columns of recap prob for each release cohort and add not recap probability to final entry of temp array
               {
-              if(s<(min(max_life_tags,ny-xx+1)*sum(nregions)+1))
+              if(s<(min(max_life_tags,nyrs-xx+1)*sum(nregions)+1))
               {
                tag_prop_final(i,n,x,a,s)=tag_prop_temp2(i,n,x,a,s);
               }
-              if(s==(min(max_life_tags,ny-xx+1)*sum(nregions)+1) && max_life_tags<=(ny-xx+1)) //add not recap probability to final entry of temp array
+              if(s==(min(max_life_tags,nyrs-xx+1)*sum(nregions)+1) && max_life_tags<=(nyrs-xx+1)) //add not recap probability to final entry of temp array
               {
                tag_prop_final(i,n,x,a,s)=tag_prop_not_rec(i,n,x,a);  //for estimation model will use this version of tag_prop in likelihood
               }
-              if(s==(min(max_life_tags,ny-xx+1)*sum(nregions)+1) && max_life_tags>(ny-xx+1)) //add not recap probability to final entry of temp array with adjustment for release events where model ends before max_life_tags (so NR remains in last state)
+              if(s==(min(max_life_tags,nyrs-xx+1)*sum(nregions)+1) && max_life_tags>(nyrs-xx+1)) //add not recap probability to final entry of temp array with adjustment for release events where model ends before max_life_tags (so NR remains in last state)
               {
                tag_prop_final(i,n,x,a,(max_life_tags*sum(nregions)+1))=tag_prop_not_rec(i,n,x,a);  //for estimation model will use this version of tag_prop in likelihood
               }
@@ -4588,7 +4587,7 @@ FUNCTION get_tag_recaptures
       xx=yrs_releases(x);
       for (int a=1;a<=nages;a++) //release age //because accounting for release age, don't need to account for recap age, just adjust mortality and T, to use plus group value if recapture age exceeds max age
         {
-         for(int y=1;y<=min(max_life_tags,ny-xx+1);y++)  //recap year
+         for(int y=1;y<=min(max_life_tags,nyrs-xx+1);y++)  //recap year
           {
            for(int j=1;j<=npops;j++) //recap stock
             {
@@ -4615,7 +4614,7 @@ FUNCTION get_tag_recaptures
       xx=yrs_releases(x);
       for (int a=1;a<=nages;a++) //release age //because accounting for release age, don't need to account for recap age, just adjust mortality and T, to use plus group value if recapture age exceeds max age
         {
-         for(int y=1;y<=min(max_life_tags,ny-xx+1);y++)  //recap year
+         for(int y=1;y<=min(max_life_tags,nyrs-xx+1);y++)  //recap year
           {
            for(int j=1;j<=npops;j++) //recap stock
             {
@@ -4646,7 +4645,7 @@ FUNCTION get_tag_recaptures
     for(int x=1; x<=nyrs_release; x++)
      {
       xx=yrs_releases(x);
-         for(int y=1;y<=min(max_life_tags,ny-xx+1);y++)  //recap year
+         for(int y=1;y<=min(max_life_tags,nyrs-xx+1);y++)  //recap year
           {
            for(int j=1;j<=npops;j++) //recap stock
             {
@@ -4656,7 +4655,7 @@ FUNCTION get_tag_recaptures
              }
             }
            }
-         for(int y=1;y<=min(max_life_tags,ny-xx+1);y++)  //recap year
+         for(int y=1;y<=min(max_life_tags,nyrs-xx+1);y++)  //recap year
           {
            for(int j=1;j<=npops;j++) //recap stock
             {
@@ -4666,7 +4665,7 @@ FUNCTION get_tag_recaptures
               }
             }
            }
-         for(int y=1;y<=min(max_life_tags,ny-xx+1);y++)  //recap year
+         for(int y=1;y<=min(max_life_tags,nyrs-xx+1);y++)  //recap year
           {
            for(int j=1;j<=npops;j++) //recap stock
             {
@@ -4678,15 +4677,15 @@ FUNCTION get_tag_recaptures
             }
              for(int s=1;s<=(max_life_tags*sum(nregions)+1);s++) //create temp array that has columns of recap prob for each release cohort and add not recap probability to final entry of temp array
               {
-              if(s<(min(max_life_tags,ny-xx+1)*sum(nregions)+1))
+              if(s<(min(max_life_tags,nyrs-xx+1)*sum(nregions)+1))
               {
                tag_prop_final_no_age(i,n,x,s)=tag_prop_temp2_no_age(i,n,x,s);
               }
-              if(s==(min(max_life_tags,ny-xx+1)*sum(nregions)+1) && max_life_tags<=(ny-xx+1)) //add not recap probability to final entry of temp array
+              if(s==(min(max_life_tags,nyrs-xx+1)*sum(nregions)+1) && max_life_tags<=(nyrs-xx+1)) //add not recap probability to final entry of temp array
               {
                tag_prop_final_no_age(i,n,x,s)=tag_prop_not_rec_no_age(i,n,x);  //for estimation model will use this version of tag_prop in likelihood
               }
-              if(s==(min(max_life_tags,ny-xx+1)*sum(nregions)+1) && max_life_tags>(ny-xx+1)) //add not recap probability to final entry of temp array with adjustment for release events where model ends before max_life_tags (so NR remains in last state)
+              if(s==(min(max_life_tags,nyrs-xx+1)*sum(nregions)+1) && max_life_tags>(nyrs-xx+1)) //add not recap probability to final entry of temp array with adjustment for release events where model ends before max_life_tags (so NR remains in last state)
               {
                tag_prop_final_no_age(i,n,x,(max_life_tags*sum(nregions)+1))=tag_prop_not_rec_no_age(i,n,x);  //for estimation model will use this version of tag_prop in likelihood
               }
@@ -4843,6 +4842,7 @@ FUNCTION get_observed_tag_recaptures
                 } //end do_age_tag_switch loop
   } //end do_tag loop
 
+ //EOUT(recaps(1))
 FUNCTION evaluate_the_objective_function
    f=0.0;
 
