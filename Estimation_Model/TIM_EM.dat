@@ -323,6 +323,12 @@
 10
 #Rave_mean
 8.5
+#R_app_pen_switch
+0
+#wt_R_app_pen
+0.1
+#R_app_pen
+0
 #input_weight
  0.4 0.75 1.5 3 5 7 7.5 7.7
  0.5 0.65 2 4 5.5 7.2 7.9 8.3

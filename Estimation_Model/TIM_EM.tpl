@@ -329,6 +329,10 @@ DATA_SECTION
    init_number Rave_pen_switch
    init_number wt_Rave_pen
    init_number Rave_mean
+   init_int R_app_pen_switch
+   init_number wt_R_app_pen
+   init_number R_app_pen
+   
 //###########READ BIO DATA###############################################################################################################################
 //#########################################################################################################################################
 //##########################################################################################################################################
@@ -938,9 +942,9 @@ PARAMETER_SECTION
   number F_pen_like
   number M_pen_like
   number Bpen_like
-  number Rave_pen
-
-  number init_abund_pen
+  number Rave_pen_like
+  number R_app_pen_like
+  number init_abund_pen_like
  // init_bounded_number  theta(1,100,ph_theta);   // for negbinomial -lnL
 
  init_number dummy(ph_dummy)
@@ -4534,8 +4538,9 @@ FUNCTION evaluate_the_objective_function
   tag_like.initialize();
   tag_like_temp.initialize();
   rec_like.initialize();
-  init_abund_pen.initialize();
-  Rave_pen.initialize();
+  init_abund_pen_like.initialize();
+  Rave_pen_like.initialize();
+  R_app_pen_like.initialize();
 
 
  // Calculate multinomial likelihoods for compositions (Fournier style)
@@ -4875,12 +4880,25 @@ FUNCTION evaluate_the_objective_function
       }
     }
 
+ if(R_app_pen_switch==1)
+ {
+  if(active(ln_rec_prop_CNST))   /// penalty on the recruit apportionment parameters
+   {
+     R_app_pen_like+=norm2(ln_rec_prop_CNST-R_app_pen);
+   }
+
+  if(active(ln_rec_prop_YR))   /// penalty on the recruit apportionment parameters
+   {
+     R_app_pen_like+=norm2(ln_rec_prop_YR-R_app_pen);
+   }
+ }
   
+
  if(abund_pen_switch==1)
  {
   if (active(ln_init_abund))
   {
-      init_abund_pen+= norm2(ln_init_abund-mean_N);
+      init_abund_pen_like+= norm2(ln_init_abund-mean_N);
     } 
    }
   
@@ -4888,7 +4906,7 @@ FUNCTION evaluate_the_objective_function
  {
   if (active(ln_R_ave))
   {
-      Rave_pen+= norm2(ln_R_ave-Rave_mean);
+      Rave_pen_like+= norm2(ln_R_ave-Rave_mean);
     } 
    }
   
@@ -4954,12 +4972,13 @@ FUNCTION evaluate_the_objective_function
    f           += survey_age_like*wt_srv_age;
    f           += rec_like*wt_rec;
    f           += tag_like*wt_tag;
-   f           += init_abund_pen*wt_abund_pen;
+   f           += init_abund_pen_like*wt_abund_pen;
    f           += Tpen_like*wt_T_pen;   
    f           += F_pen_like*wt_F_pen;
    f           += M_pen_like*wt_M_pen;
    f           += Bpen_like*wt_B_pen;
-   f           += Rave_pen*wt_Rave_pen;
+   f           += Rave_pen_like*wt_Rave_pen;
+   f           += R_app_pen_like*wt_R_app_pen;
 
 REPORT_SECTION
     //likelihoods
@@ -4978,6 +4997,10 @@ REPORT_SECTION
   report<<catch_like<<endl;
   report<<"$rec_like"<<endl;
   report<<rec_like<<endl;
+  report<<"$R_app_pen_like"<<endl;
+  report<<R_app_pen_like<<endl;
+  report<<"$Rave_pen_like"<<endl;
+  report<<Rave_pen_like<<endl;
   report<<"$Tpen_like"<<endl;
   report<<Tpen_like<<endl;
   report<<"$F_pen_like"<<endl;
@@ -4986,8 +5009,8 @@ REPORT_SECTION
   report<<M_pen_like<<endl;
   report<<"$Bpen_like"<<endl;
   report<<Bpen_like<<endl;
-  report<<"$abund_dev_pen"<<endl;
-  report<<init_abund_pen<<endl;
+  report<<"$abund_dev_pen_like"<<endl;
+  report<<init_abund_pen_like<<endl;
 
 //use these to determine which movement graphs to use in sim wrappers
   report<<"$ph_T_YR"<<endl;
