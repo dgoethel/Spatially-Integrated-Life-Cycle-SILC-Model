@@ -597,7 +597,7 @@ PARAMETER_SECTION
    !! int T_lgth_YR_AGE_ALT_FREQ_no_AG1=sum(nr)*floor(((nyrs-1)/T_est_freq)+1)*floor(((nages-2)/T_est_age_freq)+1);
    !! int T_lgth_AGE_no_AG1=sum(nr)*(nag-1);
    !! int T_lgth_YR_AGE_no_AG1=sum(nr)*(nag-1)*nyr;
-   !! int YR_APP=nps*nyr;
+   !! int YR_APP=nps*(nyr-1); //no apportionment in first year
    !! int F_lgth=sum(nr)*nyr;
    !! int sel_lgth=sum(nr);
    
