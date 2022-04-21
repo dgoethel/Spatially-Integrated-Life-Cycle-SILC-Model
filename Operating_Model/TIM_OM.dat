@@ -2516,6 +2516,23 @@
   # value of R_ave (R0) against which to penalize deviations from in log-space; used with Rave_pen_switch==1 AND wt_Rave_pen>0
 8.5
 
+#R_app_pen_switch
+ # determines whether to implement a penalty for recruit apportionment estimation
+   # NOTE:  recommended to use, stabilizes apportionment parameter estimates as there are an infinite number of large and small values that can give same actual apportionment rate near bounds due to logit transform
+ #==0 no R_app penalty
+ #==1 implement penalty on R_app estimation using norm2 to penalize deviations from Tpen in log-space, wt_move_pen must be >0
+0
+
+#wt_R_app_pen
+  # maximum likelihood penalty function weight for recruit apportionment estimation
+  # NOTE: used with R_app_pen_switch==1 OR 2
+0.1
+
+#R_app_pen
+  # value of ln_recruit_apportionment against which to penalize deviations from in logit transform-space; used with R_app_pen_switch==1  AND wt_R_app_pen>0
+  # NOTE: for 2 populations 0 centers apportionment at 50/50 to each region,  -1.5 centers mean on ~80% apportionment to region 1,  and for 3 populations around 70% apportionment
+0
+
 #abund_pen_switch
  # determines whether to implement a penalty for initial abundance estimation
  #==0 no initial abundance penalty

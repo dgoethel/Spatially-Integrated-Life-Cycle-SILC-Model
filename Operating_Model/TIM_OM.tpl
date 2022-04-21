@@ -1019,6 +1019,9 @@ DATA_SECTION
   init_number Rave_pen_switch                                               // determines whether to implement a penalty for R_ave (R0) estimation
   init_number wt_Rave_pen                                                   // maximum likelihood penalty function weight for recruitment R_ave estimation; used with Rave_pen_switch==1
   init_number Rave_mean                                                     // value of R_ave (R0) against which to penalize deviations from in log-space; used with Rave_pen_switch==1 AND wt_Rave_pen>0
+  init_number R_app_pen_switch                                               // determines whether to implement a penalty for recruit apportionment estimation
+  init_number wt_R_app_pen                                                   // maximum likelihood penalty function weight for recruit apportionment estimation; used with R_app_pen_switch==1
+  init_number R_app_pen                                                      // value of recruit apportionment against which to penalize deviations from in logit transform-space; used with R_app_pen_switch==1 AND wt_R_app_pen>0  
   init_number abund_pen_switch                                              // determines whether to implement a penalty for initial abundance estimation
   init_number wt_abund_pen                                                  // maximum likelihood penalty function weight for initial abdundance estimation; used with abund_pen_switch==1
   init_number Mean_N                                                        // value of initial abundance against which to penalize deviations from in log-space; used with abund_pen_switch==1 AND wt_abund_pen>0
@@ -5323,7 +5326,13 @@ REPORT_SECTION
   report<<"#wt_Rave_pen"<<endl;
   report<<wt_Rave_pen<<endl;
   report<<"#Rave_mean"<<endl;
-  report<<Rave_mean<<endl; 
+  report<<Rave_mean<<endl;
+  report<<"#R_app_pen_switch"<<endl;
+  report<<R_app_pen_switch<<endl;
+  report<<"#wt_R_app_pen"<<endl;
+  report<<wt_R_app_pen<<endl;
+  report<<"#R_app_pen"<<endl;
+  report<<R_app_pen<<endl;
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 ///REPORTING THE CORRECT EM PARAMETERS///////////////
