@@ -56,9 +56,9 @@
 #recruit_randwalk_switch
 0
 #init_abund_switch
-0
+1
 #est_dist_init_abund
-0
+1
 #tspawn_EM
  0 0
 #return_age
@@ -105,13 +105,19 @@
 0
 #ph_init_abund
 1
+#ph_init_abund_no_ag1
+-1
 #N_start
 8
 #init_dist_start
 0
 #ph_reg_init
 -2
+#ph_reg_age_init
+-2
 #ph_non_natal_init
+-1
+#ph_non_natal_age_init
 -1
 #lb_init_dist
 -9
@@ -309,6 +315,12 @@
 0.1
 #Mean_N
 8
+#abund_dist_pen_switch
+0
+#wt_abund_dist_pen
+0.1
+#Mean_N_dist
+0
 #move_pen_switch
 1
 #wt_move_pen
@@ -1106,6 +1118,11 @@
  0
  0
  1
+#frac_natal_true_age
+ 1 1 1 1 1 1 1 1
+ 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0
+ 1 1 1 1 1 1 1 1
 #input_M_TRUE
  0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
  0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25
