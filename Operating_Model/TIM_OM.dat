@@ -1855,36 +1855,51 @@
 
 #init_abund_switch_EM
   # determine whether initial abundance at age in first year is estimated, fixed, or based on exponential decay from Rave
-  #==(-2) fix initial abundance at init_abund_EM (can differ from TRUE distribution in OM)
-  #==(-1) fix initial abundance at TRUE values from OM
-  #==0    estimate initial abundance at age by population, where R_ave is the age-1 abundance in year 1 (to avoid overparametrization of recruitment); ph_init_abund MUST BE>0 else fixed at starting values for each parameter
-  #==1    initial abundance at age is based on exponential decay with age starting from R_ave (R0) at age-1 and assuming no fishing mortality (i.e., decay based on M only)
-0
+  #==(-2) fix initial abundance at init_abund_EM by pop, reg, age (can differ from TRUE distribution in OM)
+  #==(-1) fix initial abundance by pop, reg, age at TRUE values from OM
+  #==0    estimate initial abundance at age by population, where R_ave is the age-1 abundance in year 1 (to avoid overparametrization of recruitment); ph_init_abund_no_ag1 MUST BE>0 else fixed at starting values for each parameter
+  #==1    estimate initial abundance at age by population where all ages estimated; ph_init_abund MUST BE>0 else fixed at starting values for each parameter
+  #==2    initial abundance at age is based on exponential decay with age starting from R_ave (R0) at age-1 and assuming no fishing mortality (i.e., decay based on M only)
+     # NOTE: all estimation or derivation (all options except -2 or -1) of init_abund requires distributing init_abund to regions using the est_dist_init_abund_EM switch
+1
 
 ###############################################################################################################################################################################################################
 #ph_init_abund
-  # phase for initial abundance estimation, used when init_abund_switch_EM==0
+  # phase for initial abundance estimation where all ages estimated, used when init_abund_switch_EM==1
 1
+#ph_init_abund_no_ag1
+  # phase for initial abundance estimation where age-1 abund fixed at Rave, used when init_abund_switch_EM==0
+-1
 ###############################################################################################################################################################################################################
 
 #est_dist_init_abund_EM
   # determine how initial abundance at age from a natal population is distributed across all populations and regions (natal_homing_switch_EM==1) or across regions within a population (natal_homing_switch_EM==0)
-  #==(-2) fix the initial spatial distribution at input_dist_init_abund_EM (can differ from TRUE distribution in OM)
-  #==(-1) equally distribute across regions in a population (no fish start outside natal population)
-  #==0    fix the initial spatial distribution at TRUE values from OM
-  #==1    estimate the initial spatial distribution, ph_non_natal_init OR ph_reg_init MUST BE >0
-          # NOTE: if natal_homing_switch_EM==1, ph_non_natal_init MUST BE >0 and will estimate the distribution of each natal population across all other populations and regions (including regions within natal population)
+  #==(-2) fix the initial spatial distribution at input_dist_init_abund_EM (can differ from TRUE distribution in OM) (CONSTANT ACROSS AGES)
+  #==(-1) equally distribute across regions in a population (no fish start outside natal population)  (CONSTANT ACROSS AGES)
+  #==0    fix the initial spatial distribution at TRUE values from OM averaged across ages (CONSTANT ACROSS AGES)
+  #==1    fix the initial spatial distribution at TRUE values from OM by age (VARIES ACROSS AGES)
+  #==2    estimate the initial spatial distribution (constant across ages), ph_non_natal_init OR ph_reg_init MUST BE >0
+          # NOTE: if natal_homing_switch_EM==1, ph_non_natal_init MUST BE >0 and will estimate the distribution of each natal population across all other populations and regions (including regions within natal population); number of parameters==npops*(sum(nregs)-1)
           # NOTE: if natal_homing_switch_EM==0, ph_reg_init MUST BE >0 and will estimate the distribution of each population across all regions within that population; number of parameters==npops*(nregs-1)
              # NOTE: ONLY WORKS CORRECTLY IF # REGIONS IS CONSTANT ACROSS POPULATIONS (SEE README NOTE AT TOP OF DAT FILE)
-0
+  #==3    estimate the initial spatial distribution by age, ph_non_natal_age_init OR ph_reg_age_init MUST BE >0
+          # NOTE: if natal_homing_switch_EM==1, ph_non_natal_age_init MUST BE >0 and will estimate the distribution of each natal population across all other populations and regions by age (including regions within natal population); number of parameters==npops*(sum(nregs)-1)*nages
+          # NOTE: if natal_homing_switch_EM==0, ph_reg_age_init MUST BE >0 and will estimate the distribution of each population across all regions by age within that population; number of parameters==npops*(nregs-1)*nages
+             # NOTE: ONLY WORKS CORRECTLY IF # REGIONS IS CONSTANT ACROSS POPULATIONS (SEE README NOTE AT TOP OF DAT FILE)
+1
 
 ###############################################################################################################################################################################################################
 #ph_reg_init
-  # phase for estimation of initial distribution of abundance of each population across all regions within that population (non-natal homing models), used when est_dist_init_abund_EM==1 AND natal_homing_switch_EM==0
+  # phase for estimation of initial distribution of abundance of each population across all regions (CONSTANT BY AGE) within that population (non-natal homing models), used when est_dist_init_abund_EM==2 AND natal_homing_switch_EM==0
 -2
-
+#ph_reg_age_init
+  # phase for estimation of initial distribution of abundance of each population across all regions and ages within that population (non-natal homing models), used when est_dist_init_abund_EM==3 AND natal_homing_switch_EM==0
+-2
 #ph_non_natal_init
-  # phase for estimation of initial distribution of abundance of each natal population across all other populations and regions (including regions within natal population; for natal homing models), used when est_dist_init_abund_EM==1 AND natal_homing_switch_EM==1
+  # phase for estimation of initial distribution of abundance of each natal population across all other populations and regions (CONSTANT BY AGE) (including regions within natal population; for natal homing models), used when est_dist_init_abund_EM==2 AND natal_homing_switch_EM==1
+-1
+#ph_non_age_natal_init
+  # phase for estimation of initial distribution of abundance of each natal population across all other populations and regions by age (including regions within natal population; for natal homing models), used when est_dist_init_abund_EM==3 AND natal_homing_switch_EM==1
 -1
 ###############################################################################################################################################################################################################
 
@@ -2547,6 +2562,22 @@
 #mean_N
   # value of initial abundance against which to penalize deviations from in log-space; used with abund_pen_switch==1 AND wt_abund_pen>0
 8
+
+#init_abund_dist_pen_switch
+ # determines whether to implement a penalty for initial abundance distribution estimation
+ #==0 no initial abundance distribution penalty
+ #==1 implement penalty on initial abdundance distribution estimation using norm2 to penalize deviations from mean_N_init in log-space, wt_abund_dist_pen must be >0
+0
+
+#wt_abund_dist_pen
+  # maximum likelihood penalty function weight for initial abdundance distribution estimation
+  # NOTE: used with abund_pen_switch==1
+0.1
+
+#mean_N_dist
+  # value of initial abundance distribution against which to penalize deviations from in log-space; used with init_abund_dist_pen_switch==1 AND wt_abund_dist_pen>0
+     #NOTE: estimated as a logit transform so mean_N_dist==0 is deviations from 50/50 distribution of abundance across 2 regions
+0
 
 #move_pen_switch
  # determines whether to implement a penalty for movement estimation

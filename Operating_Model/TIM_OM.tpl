@@ -558,7 +558,6 @@ DATA_SECTION
   init_4darray SIM_nsurvey_overlap(1,np,1,np,1,nreg,1,nfs)                  // multinomial effective sample size for survey age composition data when use_stock_comp_info_survey==1 (natal homing/overlap)
   init_number SIM_ntag                                                      // multinomial effective sample size for tagging data
 
-
 //****************************************************************************************************************************************************************************************************************
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //################################################################################################################################################################################################################
@@ -734,25 +733,32 @@ DATA_SECTION
 
   init_number init_abund_switch_EM
    // determine whether initial abundance at age in first year is estimated, fixed, or based on exponential decay from Rave
-   //==(-2) fix initial abundance at init_abund_EM (can differ from TRUE distribution in OM)
-   //==(-1) fix initial abundance at TRUE values from OM
-   //==0    estimate initial abundance at age by population, where R_ave is the age-1 abundance in year 1 (to avoid overparametrization of recruitment); ph_init_abund MUST BE>0 else fixed at starting values for each parameter
-   //==1    initial abundance at age is based on exponential decay with age starting from R_ave (R0) at age-1 and assuming no fishing mortality (i.e., decay based on M only)
+   //==(-2) fix initial abundance at init_abund_EM by pop, reg, age (can differ from TRUE distribution in OM)
+   //==(-1) fix initial abundance by pop, reg, age at TRUE values from OM
+   //==0    estimate initial abundance at age by population, where R_ave is the age-1 abundance in year 1 (to avoid overparametrization of recruitment); ph_init_abund_no_ag1 MUST BE>0 else fixed at starting values for each parameter
+   //==1    estimate initial abundance at age by population where all ages estimated; ph_init_abund MUST BE>0 else fixed at starting values for each parameter
+   //==2    initial abundance at age is based on exponential decay with age starting from R_ave (R0) at age-1 and assuming no fishing mortality (i.e., decay based on M only)
+      // NOTE: all estimation or derivation (all options except -2 or -1) of init_abund requires distributing init_abund to regions using the est_dist_init_abund_EM switch
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  init_int ph_init_abund                                                    // phase for initial abundance estimation, used when init_abund_switch_EM==0
+  init_int ph_init_abund                                                    // phase for initial abundance estimation of all ages, used when init_abund_switch_EM==1
+  init_int ph_init_abund_no_ag1                                             // phase for initial abundance estimation of all ages except age-1, used when init_abund_switch_EM==0
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   init_number est_dist_init_abund_EM
    // determine how initial abundance at age from a natal population is distributed across all populations and regions (natal_homing_switch_EM==1) or across regions within a population (natal_homing_switch_EM==0)
-   //==(-2) fix the initial spatial distribution at input_dist_init_abund_EM (can differ from TRUE distribution in OM)
-   //==(-1) equally distribute across regions in a population (no fish start outside natal population)
-   //==0    fix the initial spatial distribution at TRUE values from OM
-   //==1    estimate the initial spatial distribution, ph_non_natal_init OR ph_reg_init MUST BE >0
+   //==(-2) fix the initial spatial distribution at input_dist_init_abund_EM (can differ from TRUE distribution in OM) (CONSTANT ACROSS AGES)
+   //==(-1) equally distribute across regions in a population (no fish start outside natal population) (CONSTANT ACROSS AGES)
+   //==0    fix the initial spatial distribution at TRUE values from OM averaged across ages (CONSTANT ACROSS AGES)
+   //==1    fix the initial spatial distribution at TRUE values from OM by age (VARIES ACROSS AGES)
+   //==2    estimate the initial spatial distribution of init abund (constant across ages), ph_non_natal_init OR ph_reg_init MUST BE >0 (CONSTANT ACROSS AGES)
+   //==3    estimate the spatial distribution of init abundance by age, need to make ph_non_natal_age_init OR ph_reg_age_init non-negative depending on spatial structure used (VARIES BY AGE)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  init_int ph_reg_init                                                      // phase for estimation of initial distribution of abundance of each population across all regions within that population (non-natal homing models), used when est_dist_init_abund_EM==1 AND natal_homing_switch_EM==0
-  init_int ph_non_natal_init                                                // phase for estimation of initial distribution of abundance of each natal population across all other populations and regions (including regions within natal population; for natal homing models), used when est_dist_init_abund_EM==1 AND natal_homing_switch_EM==1
+  init_int ph_reg_init                                                      // phase for estimation of initial distribution of abundance of each population across all regions within that population averaged across ages (non-natal homing models), used when est_dist_init_abund_EM==2 AND natal_homing_switch_EM==0 (CONSTANT BY AGE)
+  init_int ph_reg_age_init                                                  // phase for estimation of initial distribution of abundance of each population across all regions within that population by age (non-natal homing models), used when est_dist_init_abund_EM==3 AND natal_homing_switch_EM==0 (VARIES BY AGE)
+  init_int ph_non_natal_init                                                // phase for estimation of initial distribution of abundance of each natal population across all other populations and regions averaged across ages (including regions within natal population; for natal homing models), used when est_dist_init_abund_EM==2 AND natal_homing_switch_EM==1  (CONSTANT BY AGE)
+  init_int ph_non_natal_age_init                                            // phase for estimation of initial distribution of abundance of each natal population across all other populations and regions by age (including regions within natal population; for natal homing models), used when est_dist_init_abund_EM==3 AND natal_homing_switch_EM==1  (VARIES BY AGE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   init_number maturity_switch_equil_EM
@@ -1025,6 +1031,9 @@ DATA_SECTION
   init_number abund_pen_switch                                              // determines whether to implement a penalty for initial abundance estimation
   init_number wt_abund_pen                                                  // maximum likelihood penalty function weight for initial abdundance estimation; used with abund_pen_switch==1
   init_number Mean_N                                                        // value of initial abundance against which to penalize deviations from in log-space; used with abund_pen_switch==1 AND wt_abund_pen>0
+  init_number abund_dist_pen_switch                                         // determines whether to implement a penalty for initial abundance distribution estimation
+  init_number wt_abund_dist_pen                                             // maximum likelihood penalty function weight for initial abdundance distribution estimation; used with abund_dist_pen_switch==1
+  init_number Mean_N_dist                                                   // value of initial abundance distribution against which to penalize deviations from in log-space; used with abund_dist_pen_switch==1 AND wt_abund_dist_pen>0
   init_number move_pen_switch                                               // determines whether to implement a penalty for movement estimation
   init_number wt_move_pen                                                   // maximum likelihood penalty function weight for movement estimation; used with move_pen_switch==1 OR 2
   init_number Tpen                                                          // value of movement against which to penalize deviations from in logit transform-space; used with move_pen_switch==1 OR 2 AND wt_move_pen>0
@@ -1552,8 +1561,11 @@ PARAMETER_SECTION
 
  //calculating true fraction natal
  3darray init_abund_reg_temp(1,nps,1,nps,1,nr)
+ 4darray init_abund_age_temp(1,nps,1,nag,1,nps,1,nr)
+ 3darray init_abund_reg_age_temp(1,nps,1,nag,1,nps)
  matrix init_abund_pop_temp(1,nps,1,nps)
  3darray frac_natal_true(1,nps,1,nps,1,nr)
+ 4darray frac_natal_true_age(1,nps,1,nps,1,nr,1,nag)
  matrix T_temp(1,nps,1,nr)
  number T_temp_sum
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3919,16 +3931,19 @@ FUNCTION get_abundance
      for (int r=1;r<=nregions(j);r++)
       {
         init_abund_reg_temp(p,j,r)=sum(init_abund(p,j,r));
+         for (int a=1;a<=nages;a++)
+          {
+           init_abund_age_temp(p,a,j,r)=init_abund(p,j,r,a);
+          }
       }
+      init_abund_pop_temp(p,j)=sum(init_abund_reg_temp(p,j));
+       for (int a=1;a<=nages;a++)
+        {
+         init_abund_reg_age_temp(p,a,j)=sum(init_abund_age_temp(p,a,j));
+        }
      }
     }
-  for (int p=1;p<=npops;p++)
-   {
-    for (int j=1;j<=npops;j++)
-    {
-        init_abund_pop_temp(p,j)=sum(init_abund_reg_temp(p,j));
-      }
-     }
+    
   for (int p=1;p<=npops;p++)
    {
     for (int j=1;j<=npops;j++)
@@ -3936,6 +3951,10 @@ FUNCTION get_abundance
      for (int r=1;r<=nregions(j);r++)
       {
        frac_natal_true(p,j,r)=sum(init_abund(p,j,r))/sum(init_abund_pop_temp(p));
+        for (int a=1;a<=nages;a++)
+         {
+          frac_natal_true_age(p,j,r,a)=init_abund(p,j,r,a)/sum(init_abund_reg_age_temp(p,a));
+         }
       }
      }
     }
@@ -5106,14 +5125,20 @@ REPORT_SECTION
 
   report<<"#ph_init_abund"<<endl;
   report<<ph_init_abund<<endl;
+  report<<"#ph_init_abund_no_ag1"<<endl;
+  report<<ph_init_abund_no_ag1<<endl;
   report<<"#N_start"<<endl;
   report<<N_start<<endl;
   report<<"#init_dist_start"<<endl;
   report<<init_dist_start<<endl;
   report<<"#ph_reg_init"<<endl;
   report<<ph_reg_init<<endl;
+  report<<"#ph_reg_age_init"<<endl;
+  report<<ph_reg_age_init<<endl;
   report<<"#ph_non_natal_init"<<endl;
   report<<ph_non_natal_init<<endl;
+  report<<"#ph_non_natal_age_init"<<endl;
+  report<<ph_non_natal_age_init<<endl;
   report<<"#lb_init_dist"<<endl;
   report<<lb_init_dist<<endl;
   report<<"#ub_init_dist"<<endl;
@@ -5313,6 +5338,12 @@ REPORT_SECTION
   report<<wt_abund_pen<<endl;
   report<<"#Mean_N"<<endl;
   report<<Mean_N<<endl;
+  report<<"#abund_dist_pen_switch"<<endl;
+  report<<abund_dist_pen_switch<<endl;
+  report<<"#wt_abund_dist_pen"<<endl;
+  report<<wt_abund_dist_pen<<endl;
+  report<<"#Mean_N_dist"<<endl;
+  report<<Mean_N_dist<<endl;
   report<<"#move_pen_switch"<<endl;
   report<<move_pen_switch<<endl;
   report<<"#wt_move_pen"<<endl;
@@ -5521,7 +5552,9 @@ REPORT_SECTION
   report<<init_abund_EM<<endl;
 /// TRUE VALUES FROM OM
   report<<"#frac_natal_true"<<endl;
-  report<<frac_natal_true<<endl;  
+  report<<frac_natal_true<<endl;
+  report<<"#frac_natal_true_age"<<endl;
+  report<<frac_natal_true_age<<endl;  
   report<<"#input_M_TRUE"<<endl;
   report<<input_M_TRUE<<endl;
   report<<"#init_abund_TRUE"<<endl;
