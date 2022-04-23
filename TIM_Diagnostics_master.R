@@ -523,8 +523,8 @@ rec.prop<-ggplot( rec.apport.plot,aes(Year,value))+
   rr.p<-ggplot(rr.plot,aes(Rel_year, value))+
     geom_line(aes(col = variable,linetype=variable), stat = "identity", lwd=line.wd)+
     facet_wrap(~Rel_Reg)+
-    scale_color_manual(values = c(e.col,t.col),labels = c("Estimated","True"))+
-    scale_linetype_manual(values=c(1,2),labels = c("Estimated","True"))+
+    #scale_color_manual(values = c(e.col,t.col),labels = c("Estimated","True"))+
+    #scale_linetype_manual(values=c(1,2),labels = c("Estimated","True"))+
     ylab("Reporting Rate")+
     diag_theme+
     ylim(0,1)+
@@ -534,31 +534,31 @@ rec.prop<-ggplot( rec.apport.plot,aes(Year,value))+
   
   
   #calc resids
-  if(resid.switch==1){
+  #if(resid.switch==1){
     #calculate the resids as Relative % Diff
-    tag.rep.rate$resid<-(tag.rep.rate$RR_est-tag.rep.rate$RR_true)
-  }
+   # tag.rep.rate$resid<-(tag.rep.rate$RR_est-tag.rep.rate$RR_true)
+  #}
   
-  if(resid.switch==2){
+  #if(resid.switch==2){
     #calculate the resids as Relative % Diff
-    tag.rep.rate$resid<-((tag.rep.rate$RR_est-tag.rep.rate$RR_true)/tag.rep.rate$RR_true)*100
-  }
+   # tag.rep.rate$resid<-((tag.rep.rate$RR_est-tag.rep.rate$RR_true)/tag.rep.rate$RR_true)*100
+  #}
   
-  tag.rep.resid<-tag.rep.rate[,c(1,2,5)]
-  rr.resid<-melt(tag.rep.resid,id=c("Rel_Reg","Rel_year"))
+  #tag.rep.resid<-tag.rep.rate[,c(1,2,5)]
+  #rr.resid<-melt(tag.rep.resid,id=c("Rel_Reg","Rel_year"))
   
   
   #resid plot
-  rr.resid.p<-ggplot(rr.resid,aes(Rel_year,value))+
-    geom_hline(aes(yintercept=0), col = "grey20", lty = 2)+
-    geom_point(aes(color=value),size=2, alpha = 0.9, pch=16)+
-    theme_bw()+
-    scale_color_gradient2(low="red",mid="grey",high ="blue")+
-    ylab("% Difference (True-Estimated)")+
-    facet_wrap(~Rel_Reg)+
-    diag_theme+
-    theme(legend.position = "none", legend.justification = c(1,1))+
-    ggtitle("Reporting Rate Residuals")
+  #rr.resid.p<-ggplot(rr.resid,aes(Rel_year,value))+
+   # geom_hline(aes(yintercept=0), col = "grey20", lty = 2)+
+  #  geom_point(aes(color=value),size=2, alpha = 0.9, pch=16)+
+  #  theme_bw()+
+   # scale_color_gradient2(low="red",mid="grey",high ="blue")+
+  #  ylab("% Difference (True-Estimated)")+
+   # facet_wrap(~Rel_Reg)+
+  #  diag_theme+
+  #  theme(legend.position = "none", legend.justification = c(1,1))+
+  #  ggtitle("Reporting Rate Residuals")
   
   
   
@@ -1362,6 +1362,7 @@ tags.plot<-function(j) {
 
 #for OM
 OM_dat<-readLines(paste0(OM_direct,"\\",OM_name,".dat"))
+EM_dat<-readLines(paste0(EM_direct,"\\",EM_name,".dat"))
 
 #create a table of values
 
@@ -1375,40 +1376,40 @@ OM_error_table<-cbind(OM_error_table,temp)
 ###building table
 
 if(npops==1){
-rec_om<-grep("_sigma_recruit",OM_dat, fixed = T)+1
+rec_om<-grep("#sigma_recruit (1,np)",OM_dat, fixed = T)+2
 OM_error_table[1,2]<-OM_dat[rec_om]
   
-rec_app_om<-grep("_sigma_rec_prop",OM_dat, fixed = T)+1
+rec_app_om<-grep("#sigma_rec_prop (1,np)",OM_dat, fixed = T)+2
 OM_error_table[2,2]<-OM_dat[rec_app_om]
 
 }
 
 
 if(npops>1){
-rec_om<-grep("_sigma_recruit",OM_dat, fixed = T)+1
+rec_om<-grep("#sigma_recruit (1,np)",OM_dat, fixed = T)+2
 OM_error_table[1,2:(1+nreg_OM)]<-OM_dat[rec_om:(rec_om+(nreg_OM-1))]
 
-rec_app_om<-grep("_sigma_rec_prop",OM_dat, fixed = T)+1
+rec_app_om<-grep("#sigma_rec_prop (1,np)",OM_dat, fixed = T)+2
 OM_error_table[2,2:(1+nreg_OM)]<-OM_dat[rec_app_om:(rec_app_om+(nreg_OM-1))]
 }
 
 
-F_om<-grep("_sigma_F",OM_dat, fixed = T)+1
+F_om<-grep("#_sigma_F",OM_dat, fixed = T)+2
 OM_error_table[3,2:(1+nreg_OM)]<-OM_dat[F_om:(F_om+(nreg_OM-1))]
 
-rec_ind_om<-grep("_rec_index_sigma",OM_dat, fixed = T)+1
+rec_ind_om<-grep("#rec_index_sigma",OM_dat, fixed = T)+2
 OM_error_table[4,2:(1+nreg_OM)]<-OM_dat[rec_ind_om:(rec_ind_om+(nreg_OM-1))]
 
-surv_ind_om<-grep("_sigma_survey",OM_dat, fixed = T)+1
+surv_ind_om<-grep("#sigma_survey ",OM_dat, fixed = T)+2
 OM_error_table[5,2:(1+nreg_OM)]<-OM_dat[surv_ind_om:(surv_ind_om+(nreg_OM-1))]
 
-catch_om<-grep("_sigma_catch",OM_dat, fixed = T)+1
+catch_om<-grep("#sigma_catch ",OM_dat, fixed = T)+2
 OM_error_table[6,2:(1+nreg_OM)]<-OM_dat[catch_om:(catch_om+(nreg_OM-1))]
 
-ncatch_om<-grep("_SIM_ncatch",OM_dat, fixed = T)+1
+ncatch_om<-grep("#SIM_ncatch ",OM_dat, fixed = T)+3
 OM_error_table[7,2:(1+nreg_OM)]<-OM_dat[ncatch_om:(ncatch_om+(nreg_OM-1))]
 
-nsurvey_om<-grep("_SIM_nsurvey",OM_dat, fixed = T)+1
+nsurvey_om<-grep("#SIM_nsurvey ",OM_dat, fixed = T)+3
 OM_error_table[8,2:(1+nreg_OM)]<-OM_dat[nsurvey_om:(nsurvey_om+(nreg_OM-1))]
 
 
@@ -1466,7 +1467,7 @@ EM_est_table[2,2:ncol(EM_est_table)]<-round(out$R_ave,2)
 
 
 # adding in selectivity values based on specification
-if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==0)
+if(OM_dat[grep("#select_switch_EM",OM_dat, fixed = T)+7]==0)
 {
   EM_est_table[3,2:ncol(EM_est_table)]<-NA
   EM_est_table[4,2:ncol(EM_est_table)]<-NA
@@ -1474,7 +1475,7 @@ if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==0)
   EM_est_table[6,2:ncol(EM_est_table)]<-NA
 }
 
-if(OM_dat[grep("select_switch_survey_EM",OM_dat, fixed = T)+4]==0)
+if(OM_dat[grep("#select_switch_survey_EM",OM_dat, fixed = T)+7]==0)
 {
   EM_est_table[7,2:ncol(EM_est_table)]<-NA
   EM_est_table[8,2:ncol(EM_est_table)]<-NA
@@ -1482,7 +1483,7 @@ if(OM_dat[grep("select_switch_survey_EM",OM_dat, fixed = T)+4]==0)
   EM_est_table[10,2:ncol(EM_est_table)]<-NA
 }
 
-if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==1)
+if(OM_dat[grep("#select_switch_EM",OM_dat, fixed = T)+7]==1)
 {
   EM_est_table[3,2:ncol(EM_est_table)]<-round(out$sel_beta1,2)
   EM_est_table[4,2:ncol(EM_est_table)]<-round(out$sel_beta2,2)
@@ -1490,7 +1491,7 @@ if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==1)
   EM_est_table[6,2:ncol(EM_est_table)]<-NA
 }
 
-if(OM_dat[grep("select_switch_survey_EM",OM_dat, fixed = T)+4]==1)
+if(OM_dat[grep("#select_switch_survey_EM",OM_dat, fixed = T)+7]==1)
 {
 EM_est_table[7,2:ncol(EM_est_table)]<-round(out$sel_beta1_survey,2)
 EM_est_table[8,2:ncol(EM_est_table)]<-round(out$sel_beta2_survey,2)
@@ -1498,7 +1499,7 @@ EM_est_table[9,2:ncol(EM_est_table)]<-NA
 EM_est_table[10,2:ncol(EM_est_table)]<-NA
 }
 
-if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==2)
+if(OM_dat[grep("#select_switch_EM",OM_dat, fixed = T)+7]==2)
 {
   EM_est_table[3,2:ncol(EM_est_table)]<-round(out$sel_beta1,2)
   EM_est_table[4,2:ncol(EM_est_table)]<-round(out$sel_beta2,2)
@@ -1507,7 +1508,7 @@ if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==2)
 }
 
 
-if(OM_dat[grep("select_switch_survey_EM",OM_dat, fixed = T)+4]==2)
+if(OM_dat[grep("#select_switch_survey_EM",OM_dat, fixed = T)+7]==2)
 {
 EM_est_table[7,2:ncol(EM_est_table)]<-round(out$sel_beta1_survey,2)
 EM_est_table[8,2:ncol(EM_est_table)]<-round(out$sel_beta2_survey,2)
@@ -1539,7 +1540,7 @@ OM_true_table[2,2:ncol(OM_true_table)]<-round(out$R_ave_TRUE,2)
 
 
 # adding in selectivity values based on specification
-if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==0)
+if(OM_dat[grep("#select_switch_EM",OM_dat, fixed = T)+7]==0)
 {
   OM_true_table[3,2:ncol(OM_true_table)]<-NA
   OM_true_table[4,2:ncol(OM_true_table)]<-NA
@@ -1547,7 +1548,7 @@ if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==0)
   OM_true_table[6,2:ncol(OM_true_table)]<-NA
 }
 
-if(OM_dat[grep("select_switch_survey_EM",OM_dat, fixed = T)+4]==0)
+if(OM_dat[grep("#select_switch_survey_EM",OM_dat, fixed = T)+7]==0)
 {
   OM_true_table[7,2:ncol(OM_true_table)]<-NA
   OM_true_table[8,2:ncol(OM_true_table)]<-NA
@@ -1555,7 +1556,7 @@ if(OM_dat[grep("select_switch_survey_EM",OM_dat, fixed = T)+4]==0)
   OM_true_table[10,2:ncol(OM_true_table)]<-NA
 }
 
-if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==1)
+if(OM_dat[grep("#select_switch_EM",OM_dat, fixed = T)+7]==1)
 {
   OM_true_table[3,2:ncol(OM_true_table)]<-round(out$sel_beta1_TRUE,2)
   OM_true_table[4,2:ncol(OM_true_table)]<-round(out$sel_beta2_TRUE,2)
@@ -1563,7 +1564,7 @@ if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==1)
   OM_true_table[6,2:ncol(OM_true_table)]<-NA
 }
 
-if(OM_dat[grep("select_switch_survey_EM",OM_dat, fixed = T)+4]==1)
+if(OM_dat[grep("#select_switch_survey_EM",OM_dat, fixed = T)+7]==1)
 {
   OM_true_table[7,2:ncol(OM_true_table)]<-round(out$sel_beta1_survey_TRUE,2)
   OM_true_table[8,2:ncol(OM_true_table)]<-round(out$sel_beta2_survey_TRUE,2)
@@ -1571,7 +1572,7 @@ if(OM_dat[grep("select_switch_survey_EM",OM_dat, fixed = T)+4]==1)
   OM_true_table[10,2:ncol(OM_true_table)]<-NA
 }
 
-if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==2)
+if(OM_dat[grep("#select_switch_EM",OM_dat, fixed = T)+7]==2)
 {
   OM_true_table[3,2:ncol(OM_true_table)]<-round(out$sel_beta1_TRUE,2)
   OM_true_table[4,2:ncol(OM_true_table)]<-round(out$sel_beta2_TRUE,2)
@@ -1580,7 +1581,7 @@ if(OM_dat[grep("select_switch_EM",OM_dat, fixed = T)+4]==2)
 }
 
 
-if(OM_dat[grep("select_switch_survey_EM",OM_dat, fixed = T)+4]==2)
+if(OM_dat[grep("#select_switch_survey_EM",OM_dat, fixed = T)+7]==2)
 {
   OM_true_table[7,2:ncol(OM_true_table)]<-round(out$sel_beta1_survey_TRUE,2)
   OM_true_table[8,2:ncol(OM_true_table)]<-round(out$sel_beta2_survey_TRUE,2)
@@ -1628,7 +1629,7 @@ if(out$npops_OM>1 && out$npops==1 && out$nregions==1){
 
 
 #is this a diagnostics run?
-diagnostic<-OM_dat[(grep("diagnostics_switch",OM_dat, fixed = T)+3)]
+diagnostic<-OM_dat[(grep("diagnostics_switch",OM_dat, fixed = T)+5)]
 
 if(diagnostic==0)
 {text2<-"Diagnostic Run: NO. Uses OBS values as data inputs"}
@@ -1690,7 +1691,7 @@ grid.arrange(ncol = 1,
 
 grid.arrange(ncol = 1,
              #top="Reporting Rate ",
-             rr.p, rr.resid.p)
+             rr.p) #, rr.resid.p)
 
 
 grid.arrange(ncol = 1,
