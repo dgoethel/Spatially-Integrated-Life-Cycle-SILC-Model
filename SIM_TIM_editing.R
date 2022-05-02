@@ -19,7 +19,7 @@ diag.run<-1
 
 
 #2) Set number of simulations to perform
-nsim <-500
+nsim <-1000
 
 ######################
 #plot parameters
@@ -152,6 +152,7 @@ ls=foreach(j=1:nsim,.options.snow = opts,.combine='rbind',.packages =c('PBSmodel
   invisible(file.copy(from=paste0(OM_direct,"\\",OM_name,".exe",sep=""),to=paste0(runs_dir,"\\Run",j,"\\Operating_Model",sep="")))
   invisible(file.copy(from=paste0(OM_direct,"\\",OM_name,".dat",sep=""),to=paste0(runs_dir,"\\Run",j,"\\Operating_Model",sep="")))
   invisible(file.copy(from=paste0(EM_direct,"\\", EM_name,".exe",sep=""),to=paste0(runs_dir,"\\Run",j,"\\Estimation_Model",sep="")))
+  invisible(if(file.exists(paste0(EM_direct,"\\", EM_name,".pin",sep=""))){file.copy(from=paste0(EM_direct,"\\", EM_name,".pin",sep=""),to=paste0(runs_dir,"\\Run",j,"\\Estimation_Model",sep=""))})
   
 
   
