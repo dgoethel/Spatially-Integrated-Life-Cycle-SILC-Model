@@ -492,7 +492,7 @@ DATA_SECTION
   init_3darray input_F_MSY(1,np,1,nreg,1,nf)                                // specify F_MSY directly to simulate MSY dynamics, used with F_switch==2
   init_3darray input_F(1,np,1,nreg,1,nf)                                    // specify F for simulations, used with F_switch==1,7,8
   init_number input_F_const                                                 // specify F for simulations, used with F_switch==4,5,6
-  init_3darray dunce_F(1,np,1,nreg,1,3)                                     // dunce cap F parameters (fishery start year, min, max F), used with F_switch==9
+  init_3darray dunce_F(1,np,1,nreg,1,4)                                     // dunce cap F parameters (fishery start year, min F start, max F, min F end), used with F_switch==9
   init_3darray F_rho(1,np,1,nreg,1,nf)                                      // degree of autocorrelation (0-1) for  random walk in F, used with F_switch==8; NOT YET TESTED
   init_3darray sigma_F(1,np,1,nreg,1,nf)                                    // F deviations variance term, used when F_switch==7,8,9
 
@@ -1144,9 +1144,11 @@ PARAMETER_SECTION
 
  //For dunce cap F
  matrix Fstartyr(1,nps,1,nr)
- matrix minF(1,nps,1,nr)
+ matrix minF_start(1,nps,1,nr)
+ matrix minF_end(1,nps,1,nr)
  matrix maxF(1,nps,1,nr)
- matrix stepF(1,nps,1,nr)
+ matrix stepF_up(1,nps,1,nr)
+ matrix stepF_down(1,nps,1,nr)
  vector R_ave(1,nps)
  
  // vitals
@@ -2366,9 +2368,12 @@ FUNCTION get_F_age
              if(F_switch==9)  //Dunce cap F
               {
                Fstartyr(j,r)=dunce_F(j,r,1);
-               minF(j,r)=dunce_F(j,r,2);
+               minF_start(j,r)=dunce_F(j,r,2);
                maxF(j,r)=dunce_F(j,r,3);
-               stepF(j,r)=(maxF(j,r)-minF(j,r))/((nyrs-Fstartyr(j,r))/2);
+               minF_end(j,r)=dunce_F(j,r,4);
+               stepF_up(j,r)=(maxF(j,r)-minF_start(j,r))/((nyrs-Fstartyr(j,r))/2);
+               stepF_down(j,r)=(maxF(j,r)-minF_end(j,r))/((nyrs-Fstartyr(j,r))/2);
+
               if(y<Fstartyr(j,r))
                {
                 F_year(j,r,y,z)=0;
@@ -2377,15 +2382,15 @@ FUNCTION get_F_age
                {
                if(y<((nyrs-Fstartyr(j,r))/2+Fstartyr(j,r)))
                 {
-                 F_year(j,r,y,z)=minF(j,r)+(y-Fstartyr(j,r))*stepF(j,r)*mfexp(F_RN(j,r,y,z)*sigma_F(j,r,z)-0.5*square(sigma_F(j,r,z)));
+                 F_year(j,r,y,z)=(minF_start(j,r)+(y-Fstartyr(j,r))*stepF_up(j,r))*mfexp(F_RN(j,r,y,z)*sigma_F(j,r,z)-0.5*square(sigma_F(j,r,z)));
                 }
                }
                if(y>=((nyrs-Fstartyr(j,r))/2+Fstartyr(j,r)))
                 {
-                 F_year(j,r,y,z)=maxF(j,r)-((y-Fstartyr(j,r))-((nyrs-Fstartyr(j,r))/2))*stepF(j,r)*mfexp(F_RN(j,r,y,z)*sigma_F(j,r,z)-0.5*square(sigma_F(j,r,z)));
-                  if(F_year(j,r,y,z)<minF(j,r)) //needed because the stepF decrease can be randomly be greater than preceding F, and so F goes negative
+                 F_year(j,r,y,z)=(maxF(j,r)-((y-Fstartyr(j,r))-((nyrs-Fstartyr(j,r))/2))*stepF_down(j,r))*mfexp(F_RN(j,r,y,z)*sigma_F(j,r,z)-0.5*square(sigma_F(j,r,z)));
+                  if(F_year(j,r,y,z)<minF_end(j,r)) //needed because the stepF decrease can be randomly be greater than preceding F, and so F goes negative
                   {
-                  F_year(j,r,y,z)=0.5*minF(j,r);
+                  F_year(j,r,y,z)=minF_end(j,r)*mfexp(F_RN(j,r,y,z)*sigma_F(j,r,z)-0.5*square(sigma_F(j,r,z)));
                   }
                 }
               }
