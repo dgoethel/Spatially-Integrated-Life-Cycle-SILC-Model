@@ -603,7 +603,10 @@ PARAMETER_SECTION
   !! int fishfleet=nfleets(1); 
   !! int survfleet=nfleets_survey(1);
   !! int parreg=nregions(1);
+  !! int parreg_abund=(nregions(1)-1);
+  !! if(nregions(1)==1){parreg_abund=1;} //avoid array dimensions of 0 when only 1 region in a pop
   !! int reg_age_frac_natal=(nregions(1)-1)*nages;
+  !! if(nregions(1)==1){reg_age_frac_natal=nages;} //avoid array dimensions of 0 when only 1 region in a pop
   !! int nat_age_frac_natal=(sum(nr)-1)*nages;
   //***********************************************************************
   //***********************************************************************
@@ -643,8 +646,8 @@ PARAMETER_SECTION
 
 //recruit apportionment parameters
   //*****FOLLOWING WILL ONLY WORK PROPERLY IF ONLY 1 POP OR  NUMBER OF REGIONS IS CONSTANT ACROSS POPULATIONS****************
-  init_bounded_matrix ln_rec_prop_CNST(1,nps,1,parreg-1,lb_rec_app,ub_rec_app,ph_rec_app_CNST)//needs testing
-  init_bounded_matrix ln_rec_prop_YR(1,YR_APP,1,parreg-1,lb_rec_app,ub_rec_app,ph_rec_app_YR) //needs testing
+  init_bounded_matrix ln_rec_prop_CNST(1,nps,1,parreg_abund,lb_rec_app,ub_rec_app,ph_rec_app_CNST)//needs testing
+  init_bounded_matrix ln_rec_prop_YR(1,YR_APP,1,parreg_abund,lb_rec_app,ub_rec_app,ph_rec_app_YR) //needs testing
   //*****************************************************************************
 
   matrix G_app(1,nps,1,nr);//check this
@@ -711,7 +714,7 @@ PARAMETER_SECTION
   init_bounded_matrix ln_nat_age(1,nps,1,nat_age_frac_natal,lb_init_dist,ub_init_dist,ph_non_natal_age_init) //est init_abund dist for natal homing
   
   //*****FOLLOWING WILL ONLY WORK PROPERLY IF ONLY 1 POP OR  NUMBER OF REGIONS IS CONSTANT ACROSS POPULATIONS****************
-  init_bounded_matrix ln_reg(1,nps,1,parreg-1,lb_init_dist,ub_init_dist,ph_reg_init) //est init abund dist for metapop/metamictic
+  init_bounded_matrix ln_reg(1,nps,1,parreg_abund,lb_init_dist,ub_init_dist,ph_reg_init) //est init abund dist for metapop/metamictic
   init_bounded_matrix ln_reg_age(1,nps,1,reg_age_frac_natal,lb_init_dist,ub_init_dist,ph_reg_age_init) //est init abund dist for metapop/metamictic
   //*****************************************************************************
   
@@ -2754,6 +2757,8 @@ FUNCTION get_abundance
                 {
                  for (int z=1;z<=nfleets(j);z++)
                   {
+              if(natal_homing_switch>0) //NOTE THIS CALC CAN LEAD TO NAN WHEN 0 ABUNDANCE IN A POP/REG
+               {
                 abundance_spawn_overlap(p,j,r,y,a)=abundance_at_age_AM_overlap_region(p,j,y,a,r)*mfexp(-(M(j,r,y,a)+F(j,r,y,a))*tspawn(p));
                 SSB_region_temp_overlap(p,j,r,y,a)=abundance_spawn_overlap(p,j,r,y,a)*wt_mat_mult_reg(p,r,y,a); //changed mat by region
                 SSB_region_overlap(p,j,r,y)=sum(SSB_region_temp_overlap(p,j,r,y));
@@ -2818,7 +2823,7 @@ FUNCTION get_abundance
                 depletion_natal_overlap(p,y)=biomass_natal_overlap(p,y)/biomass_natal_overlap(p,1);
                 Bratio_population_overlap(p,j,y)=SSB_population_overlap(p,j,y)/SSB_zero(p);
                 Bratio_natal_overlap(p,y)=SSB_natal_overlap(p,y)/SSB_zero(p);
-
+               }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3809,7 +3814,8 @@ FUNCTION get_abundance
                   {
           if(a==1)
             {
-
+              if(natal_homing_switch>0) //NOTE THIS CALC CAN LEAD TO NAN WHEN 0 ABUNDANCE IN A POP/REG
+               {
                 abundance_spawn_overlap(p,j,r,y,a)=abundance_at_age_AM_overlap_region(p,j,y,a,r)*mfexp(-(M(j,r,y,a)+F(j,r,y,a))*tspawn(p));
                 abundance_natal_temp_overlap(p,y,a,j)=abundance_at_age_AM_overlap_population(p,j,y,a);
                 abundance_natal_overlap(p,y,a)=sum(abundance_natal_temp_overlap(p,y,a));
@@ -3834,7 +3840,7 @@ FUNCTION get_abundance
                 depletion_region_overlap(p,j,r,y)=biomass_AM_overlap_region(p,j,r,y)/biomass_AM_overlap_region(p,j,r,1);
                 depletion_population_overlap(p,j,y)=biomass_population_overlap(p,j,y)/biomass_population_overlap(p,j,1);
                 depletion_natal_overlap(p,y)=biomass_natal_overlap(p,y)/biomass_natal_overlap(p,1);
-               
+               }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////a==1 metapop type abundance calcs////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3880,6 +3886,8 @@ FUNCTION get_abundance
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    if(a==2)
     {
+              if(natal_homing_switch>0) //NOTE THIS CALC CAN LEAD TO NAN WHEN 0 ABUNDANCE IN A POP/REG
+               {
                 abundance_spawn_overlap(p,j,r,y,a)=abundance_at_age_AM_overlap_region(p,j,y,a,r)*mfexp(-(M(j,r,y,a)+F(j,r,y,a))*tspawn(p));
                 abundance_natal_temp_overlap(p,y,a,j)=abundance_at_age_AM_overlap_population(p,j,y,a);
                 abundance_natal_overlap(p,y,a)=sum(abundance_natal_temp_overlap(p,y,a));
@@ -3904,7 +3912,7 @@ FUNCTION get_abundance
                 depletion_region_overlap(p,j,r,y)=biomass_AM_overlap_region(p,j,r,y)/biomass_AM_overlap_region(p,j,r,1);
                 depletion_population_overlap(p,j,y)=biomass_population_overlap(p,j,y)/biomass_population_overlap(p,j,1);
                 depletion_natal_overlap(p,y)=biomass_natal_overlap(p,y)/biomass_natal_overlap(p,1);
-                            
+               }             
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////a==2 metapop type abundance calcs////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3950,6 +3958,8 @@ FUNCTION get_abundance
  
              if(a>2 && a<nages)
                {
+              if(natal_homing_switch>0) //NOTE THIS CALC CAN LEAD TO NAN WHEN 0 ABUNDANCE IN A POP/REG
+               {
                 abundance_spawn_overlap(p,j,r,y,a)=abundance_at_age_AM_overlap_region(p,j,y,a,r)*mfexp(-(M(j,r,y,a)+F(j,r,y,a))*tspawn(p));
                 abundance_natal_temp_overlap(p,y,a,j)=abundance_at_age_AM_overlap_population(p,j,y,a);
                 abundance_natal_overlap(p,y,a)=sum(abundance_natal_temp_overlap(p,y,a));
@@ -3974,7 +3984,7 @@ FUNCTION get_abundance
                 depletion_region_overlap(p,j,r,y)=biomass_AM_overlap_region(p,j,r,y)/biomass_AM_overlap_region(p,j,r,1);
                 depletion_population_overlap(p,j,y)=biomass_population_overlap(p,j,y)/biomass_population_overlap(p,j,1);
                 depletion_natal_overlap(p,y)=biomass_natal_overlap(p,y)/biomass_natal_overlap(p,1);
-                                
+               }                 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////a>2 a<nages metapop type abundance calcs///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4018,6 +4028,8 @@ FUNCTION get_abundance
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
            if(a==nages) //account for fish already in plus group
             {
+              if(natal_homing_switch>0) //NOTE THIS CALC CAN LEAD TO NAN WHEN 0 ABUNDANCE IN A POP/REG
+               {             
                 abundance_spawn_overlap(p,j,r,y,a)=abundance_at_age_AM_overlap_region(p,j,y,a,r)*mfexp(-(M(j,r,y,a)+F(j,r,y,a))*tspawn(p));
                 abundance_natal_temp_overlap(p,y,a,j)=abundance_at_age_AM_overlap_population(p,j,y,a);
                 abundance_natal_overlap(p,y,a)=sum(abundance_natal_temp_overlap(p,y,a));
@@ -4042,7 +4054,7 @@ FUNCTION get_abundance
                 depletion_region_overlap(p,j,r,y)=biomass_AM_overlap_region(p,j,r,y)/biomass_AM_overlap_region(p,j,r,1);
                 depletion_population_overlap(p,j,y)=biomass_population_overlap(p,j,y)/biomass_population_overlap(p,j,1);
                 depletion_natal_overlap(p,y)=biomass_natal_overlap(p,y)/biomass_natal_overlap(p,1);               
-                 
+              }   
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////a==nages metapop type abundance calcs///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4239,7 +4251,10 @@ FUNCTION get_survey_CAA_prop
            {
             for (int a=1;a<=nages;a++)
              {
-              survey_at_age_region_fleet_overlap_prop(p,j,r,z,y,a)=survey_fleet_overlap_age(p,j,r,y,z,a)/sum(survey_fleet_overlap_age(p,j,r,y,z));              
+              if(natal_homing_switch>0) //NOTE THIS CALC CAN LEAD TO NAN WHEN 0 ABUNDANCE IN A POP/REG
+               {
+                 survey_at_age_region_fleet_overlap_prop(p,j,r,z,y,a)=survey_fleet_overlap_age(p,j,r,y,z,a)/sum(survey_fleet_overlap_age(p,j,r,y,z));
+               }
               survey_at_age_fleet_prop(j,r,y,z,a)=survey_fleet_age(j,r,y,z,a)/sum(survey_fleet_age(j,r,y,z));
              }
             }
@@ -4280,10 +4295,13 @@ FUNCTION get_CAA_prop
            {
             for (int a=1;a<=nages;a++)
              {
+              if(natal_homing_switch>0) //NOTE THIS CALC CAN LEAD TO NAN WHEN 0 ABUNDANCE IN A POP/REG
+               {
                  catch_at_age_region_fleet_overlap_prop(p,j,r,z,y,a)=catch_at_age_region_fleet_overlap(p,j,r,z,y,a)/sum(catch_at_age_region_fleet_overlap(p,j,r,z,y));              
                  catch_at_age_region_overlap_prop(p,j,r,y,a)=catch_at_age_region_overlap(p,j,r,y,a)/sum(catch_at_age_region_overlap(p,j,r,y));
                  catch_at_age_population_overlap_prop(p,j,y,a)=catch_at_age_population_overlap(p,j,y,a)/sum(catch_at_age_population_overlap(p,j,y));
                  catch_at_age_natal_overlap_prop(p,y,a)=catch_at_age_natal_overlap(p,y,a)/sum(catch_at_age_natal_overlap(p,y));
+               }
 
                  catch_at_age_fleet_prop(j,r,y,z,a)=catch_at_age_fleet_prop_temp(j,r,y,z,a)/sum(catch_at_age_fleet_prop_temp(j,r,y,z));
                  catch_at_age_region_prop(j,r,y,a)=catch_at_age_region(j,r,y,a)/sum(catch_at_age_region(j,r,y));
